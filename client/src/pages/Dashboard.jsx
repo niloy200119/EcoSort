@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Award, Camera, TrendingUp, Calendar, MapPin, Trophy } from 'lucide-react';
+import { Award, Camera, TrendingUp, Calendar, MapPin, Trophy, Leaf } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
@@ -36,19 +36,19 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-12 px-4">
+    <div className="min-h-screen bg-emerald-mist/40 py-12 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-8"
+          className="mb-8 text-center md:text-left"
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
+          <h1 className="text-4xl md:text-5xl font-bold mb-2 font-comfortaa gradient-text-emerald">
             Welcome back, {user.name.split(' ')[0]}! 👋
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-sage font-nunito">
             Track your environmental impact and continue your eco journey
           </p>
         </motion.div>
@@ -59,53 +59,53 @@ const Dashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl p-6 text-white shadow-lg"
+            className="glass-mint rounded-3xl p-6 text-moss shadow-lg animate-breathe"
           >
-            <Trophy className="w-10 h-10 mb-3" />
-            <p className="text-3xl font-bold mb-1">{user.points}</p>
-            <p className="text-yellow-100">Impact Points</p>
+            <Trophy className="w-10 h-10 mb-3 text-lime-glow" />
+            <p className="text-3xl font-bold mb-1 font-comfortaa">{user.points}</p>
+            <p className="text-sage font-nunito">Impact Points</p>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg"
+            className="glass-ultra rounded-3xl p-6 text-moss shadow-lg animate-breathe"
           >
-            <Camera className="w-10 h-10 mb-3" />
-            <p className="text-3xl font-bold mb-1">{user.scansThisMonth}</p>
-            <p className="text-green-100">Scans This Month</p>
+            <Camera className="w-10 h-10 mb-3 text-emerald-soft" />
+            <p className="text-3xl font-bold mb-1 font-comfortaa">{user.scansThisMonth}</p>
+            <p className="text-sage font-nunito">Scans This Month</p>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg"
+            className="glass-soft rounded-3xl p-6 text-moss shadow-lg animate-breathe"
           >
-            <Award className="w-10 h-10 mb-3" />
-            <p className="text-3xl font-bold mb-1">{user.level}</p>
-            <p className="text-blue-100">Current Level</p>
+            <Award className="w-10 h-10 mb-3 text-emerald-soft" />
+            <p className="text-3xl font-bold mb-1 font-comfortaa">{user.level}</p>
+            <p className="text-sage font-nunito">Current Level</p>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white shadow-lg"
+            className="glass-soft rounded-3xl p-6 text-moss shadow-lg animate-breathe"
           >
-            <TrendingUp className="w-10 h-10 mb-3" />
-            <p className="text-3xl font-bold mb-1">+15%</p>
-            <p className="text-purple-100">vs Last Month</p>
+            <TrendingUp className="w-10 h-10 mb-3 text-lime-glow" />
+            <p className="text-3xl font-bold mb-1 font-comfortaa">+15%</p>
+            <p className="text-sage font-nunito">vs Last Month</p>
           </motion.div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Recent Scans */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <Camera className="w-6 h-6 text-primary" />
+            <div className="glass-ultra rounded-3xl p-6">
+              <h2 className="text-2xl font-bold text-moss mb-6 flex items-center gap-2 font-comfortaa">
+                <Camera className="w-6 h-6 text-emerald-soft" />
                 Recent Scans
               </h2>
               <div className="space-y-4">
@@ -115,46 +115,46 @@ const Dashboard = () => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="flex items-center justify-between p-4 glass-soft rounded-2xl hover:scale-[1.01] transition-transform"
                   >
                     <div className="flex-1">
-                      <p className="font-semibold text-gray-900">{scan.item}</p>
-                      <p className="text-sm text-gray-500">{scan.date}</p>
+                      <p className="font-semibold text-moss font-nunito">{scan.item}</p>
+                      <p className="text-sm text-sage font-nunito">{scan.date}</p>
                     </div>
                     <div className="flex items-center gap-4">
-                      <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
+                      <span className="bg-emerald-mist/60 text-moss px-3 py-1 rounded-full text-sm font-quicksand font-semibold">
                         {scan.method}
                       </span>
-                      <span className="text-yellow-600 font-bold">+{scan.points}</span>
+                      <span className="text-lime-glow font-bold font-comfortaa">+{scan.points}</span>
                     </div>
                   </motion.div>
                 ))}
               </div>
               <Link to="/scanner">
-                <button className="w-full mt-6 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-dark transition-colors">
+                <button className="w-full mt-6 glass-mint text-moss px-6 py-3 rounded-full font-quicksand font-semibold hover:scale-105 transition-transform focus:outline-none focus:ring-0">
                   Scan New Item
                 </button>
               </Link>
             </div>
 
             {/* Achievements */}
-            <div className="bg-white rounded-xl shadow-lg p-6 mt-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <Trophy className="w-6 h-6 text-yellow-500" />
+            <div className="glass-ultra rounded-3xl p-6 mt-8">
+              <h2 className="text-2xl font-bold text-moss mb-6 flex items-center gap-2 font-comfortaa">
+                <Trophy className="w-6 h-6 text-lime-glow" />
                 Achievements
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 {achievements.map((achievement) => (
                   <div
                     key={achievement.id}
-                    className={`text-center p-4 rounded-lg transition-all ${
+                    className={`text-center p-4 rounded-2xl transition-all ${
                       achievement.unlocked
-                        ? 'bg-yellow-50 border-2 border-yellow-400'
-                        : 'bg-gray-100 opacity-50'
+                        ? 'glass-mint'
+                        : 'glass-soft opacity-60'
                     }`}
                   >
                     <div className="text-4xl mb-2">{achievement.icon}</div>
-                    <p className="text-sm font-semibold text-gray-700">
+                    <p className="text-sm font-semibold text-moss font-nunito">
                       {achievement.title}
                     </p>
                   </div>
@@ -166,47 +166,48 @@ const Dashboard = () => {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Upcoming Reminders */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <Calendar className="w-6 h-6 text-primary" />
+            <div className="glass-ultra rounded-3xl p-6">
+              <h2 className="text-2xl font-bold text-moss mb-6 flex items-center gap-2 font-comfortaa">
+                <Calendar className="w-6 h-6 text-emerald-soft" />
                 Reminders
               </h2>
               <div className="space-y-4">
                 {upcomingReminders.map((reminder) => (
                   <div
                     key={reminder.id}
-                    className="p-4 bg-blue-50 border-l-4 border-blue-500 rounded"
+                    className="p-4 glass-soft rounded-2xl"
                   >
-                    <p className="font-semibold text-gray-900">{reminder.title}</p>
-                    <p className="text-sm text-gray-600 mt-1">
+                    <p className="font-semibold text-moss font-nunito">{reminder.title}</p>
+                    <p className="text-sm text-sage mt-1 font-nunito">
                       {reminder.date} at {reminder.time}
                     </p>
                   </div>
                 ))}
               </div>
-              <button className="w-full mt-4 bg-secondary text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary transition-colors">
+              <button className="w-full mt-4 glass-mint text-moss px-4 py-2 rounded-full font-quicksand font-semibold hover:scale-105 transition-transform focus:outline-none focus:ring-0">
                 Add Reminder
               </button>
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h2>
+            <div className="glass-ultra rounded-3xl p-6">
+              <h2 className="text-2xl font-bold text-moss mb-6 font-comfortaa">Quick Actions</h2>
               <div className="space-y-3">
                 <Link to="/scanner">
-                  <button className="w-full bg-primary text-white px-4 py-3 rounded-lg font-semibold hover:bg-dark transition-colors flex items-center justify-center gap-2">
+                  <button className="w-full glass-mint text-moss px-4 py-3 rounded-full font-quicksand font-semibold hover:scale-105 transition-transform flex items-center justify-center gap-2 focus:outline-none focus:ring-0">
                     <Camera className="w-5 h-5" />
                     Scan Item
                   </button>
                 </Link>
                 <Link to="/map">
-                  <button className="w-full bg-secondary text-white px-4 py-3 rounded-lg font-semibold hover:bg-primary transition-colors flex items-center justify-center gap-2">
+                  <button className="w-full glass-soft text-moss px-4 py-3 rounded-full font-quicksand font-semibold hover:scale-105 transition-transform flex items-center justify-center gap-2 focus:outline-none focus:ring-0">
                     <MapPin className="w-5 h-5" />
                     Find Centers
                   </button>
                 </Link>
                 <Link to="/guide">
-                  <button className="w-full bg-gray-200 text-gray-700 px-4 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors">
+                  <button className="w-full glass-soft text-moss px-4 py-3 rounded-full font-quicksand font-semibold hover:scale-105 transition-transform focus:outline-none focus:ring-0 flex items-center justify-center gap-2">
+                    <Leaf className="w-5 h-5 text-emerald-soft" />
                     Browse Guide
                   </button>
                 </Link>

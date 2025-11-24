@@ -134,6 +134,36 @@ const Guide = () => {
     return matchesSearch && matchesCategory;
   });
 
+  const getItemAnimation = (category) => {
+    switch (category) {
+      case 'glass':
+        return {
+          whileHover: { scale: 1.03, rotate: 0.5 },
+          transition: { duration: 0.3 }
+        };
+      case 'plastic':
+        return {
+          whileHover: { scale: 1.04, y: -3 },
+          transition: { duration: 0.3 }
+        };
+      case 'organic':
+        return {
+          whileHover: { scale: 1.03 },
+          transition: { duration: 0.4 }
+        };
+      case 'metal':
+        return {
+          whileHover: { scale: 1.02, rotate: -0.5 },
+          transition: { duration: 0.25 }
+        };
+      default:
+        return {
+          whileHover: { scale: 1.02 },
+          transition: { duration: 0.3 }
+        };
+    }
+  };
+
   const getDisposalColor = (disposal) => {
     if (disposal.includes('Recycle')) return 'bg-green-100 text-green-800 border-green-500';
     if (disposal.includes('Compost')) return 'bg-green-100 text-green-800 border-green-500';
@@ -142,7 +172,7 @@ const Guide = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-12 px-4">
+    <div className="min-h-screen bg-emerald-mist/40 py-12 px-4">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -150,10 +180,10 @@ const Guide = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 font-comfortaa gradient-text-emerald">
             Waste Segregation Guide
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-sage font-nunito">
             Search our comprehensive database to learn how to dispose of any item
           </p>
         </motion.div>
@@ -161,13 +191,13 @@ const Guide = () => {
         {/* Search Bar */}
         <div className="mb-8">
           <div className="relative max-w-2xl mx-auto">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-6 h-6" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-sage w-6 h-6" />
             <input
               type="text"
               placeholder="Search for an item... (e.g., plastic bottle, batteries)"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-14 pr-4 py-4 rounded-xl border-2 border-gray-200 focus:border-primary focus:outline-none text-lg"
+              className="w-full pl-14 pr-4 py-4 rounded-full glass-soft border border-emerald-soft/20 text-lg text-moss placeholder:text-sage/70 focus:outline-none focus:ring-0"
             />
           </div>
         </div>
@@ -179,10 +209,10 @@ const Guide = () => {
               <button
                 key={category.value}
                 onClick={() => setSelectedCategory(category.value)}
-                className={`px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2 ${
+                className={`px-6 py-3 rounded-full font-quicksand font-semibold transition-all flex items-center gap-2 focus:outline-none focus:ring-0 ${
                   selectedCategory === category.value
-                    ? 'bg-primary text-white'
-                    : 'bg-white text-gray-700 hover:bg-green-50 border-2 border-gray-200'
+                    ? 'glass-mint text-moss'
+                    : 'glass-soft text-sage hover:bg-emerald-mist/30'
                 }`}
               >
                 <span>{category.icon}</span>
@@ -194,14 +224,18 @@ const Guide = () => {
 
         {/* Items Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredItems.map((item, index) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
-            >
+            {filteredItems.map((item, index) => {
+              const anim = getItemAnimation(item.category);
+              return (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  whileHover={anim.withHover}
+                  className="glass-ultra rounded-3xl p-6 transition-transform animate-breathe"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
               <div className="flex items-start justify-between mb-4">
                 <div className="text-4xl">{item.icon}</div>
                 {item.canRecycle ? (
@@ -211,7 +245,7 @@ const Guide = () => {
                 )}
               </div>
 
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
+              <h3 className="text-xl font-bold text-moss mb-3 font-comfortaa">
                 {item.name}
               </h3>
 
@@ -219,38 +253,38 @@ const Guide = () => {
                 {item.disposal}
               </div>
 
-              <p className="text-gray-700 text-sm leading-relaxed">
+              <p className="text-sage text-sm leading-relaxed font-nunito">
                 {item.instructions}
               </p>
 
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <span className="text-sm text-gray-500 capitalize">
-                  Category: <span className="font-semibold text-primary">{item.category}</span>
+              <div className="mt-4 pt-4 border-t border-emerald-soft/20">
+                <span className="text-sm text-sage capitalize font-nunito">
+                  Category: <span className="font-semibold text-moss">{item.category}</span>
                 </span>
               </div>
             </motion.div>
-          ))}
+          )})}
         </div>
 
         {filteredItems.length === 0 && (
           <div className="text-center py-12">
-            <Leaf className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-xl text-gray-500">No items found matching your search.</p>
-            <p className="text-gray-400 mt-2">Try searching for something else or browse all items.</p>
+            <Leaf className="w-16 h-16 text-emerald-soft mx-auto mb-4 animate-leaf-drift" />
+            <p className="text-xl text-sage font-nunito">No items found matching your search.</p>
+            <p className="text-sage/70 mt-2 font-nunito">Try searching for something else or browse all items.</p>
           </div>
         )}
 
         {/* Info Box */}
-        <div className="mt-12 bg-primary/10 rounded-xl p-8">
-          <h3 className="text-2xl font-bold text-primary mb-4">
+        <div className="mt-12 glass-soft rounded-3xl p-8">
+          <h3 className="text-2xl font-bold text-moss mb-4 font-comfortaa">
             Can't Find What You're Looking For?
           </h3>
-          <p className="text-gray-700 mb-4">
+          <p className="text-sage mb-4 font-nunito">
             Use our AI Scanner to identify any waste item instantly! Simply take a photo and 
             get immediate disposal instructions.
           </p>
           <a href="/scanner">
-            <button className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-dark transition-colors">
+            <button className="glass-mint text-moss px-6 py-3 rounded-full font-quicksand font-semibold hover:scale-105 transition-transform focus:outline-none focus:ring-0">
               Try AI Scanner
             </button>
           </a>

@@ -71,7 +71,7 @@ const Map = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-12 px-4">
+    <div className="min-h-screen bg-emerald-mist/40 py-12 px-4">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -79,10 +79,10 @@ const Map = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 font-comfortaa gradient-text-emerald">
             Recycling Centers Map
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-sage font-nunito">
             Find the nearest recycling facilities in Sylhet
           </p>
         </motion.div>
@@ -94,10 +94,10 @@ const Map = () => {
               <button
                 key={category.value}
                 onClick={() => setSelectedCategory(category.value)}
-                className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
+                className={`px-6 py-3 rounded-full font-quicksand font-semibold transition-all focus:outline-none focus:ring-0 ${
                   selectedCategory === category.value
-                    ? 'bg-primary text-white'
-                    : 'bg-white text-gray-700 hover:bg-green-50 border-2 border-gray-200'
+                    ? 'glass-mint text-moss'
+                    : 'glass-soft text-sage hover:bg-emerald-mist/30'
                 }`}
               >
                 {category.label}
@@ -107,13 +107,13 @@ const Map = () => {
         </div>
 
         {/* Map Placeholder */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
-          <div className="h-96 bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center relative">
+        <div className="glass-ultra rounded-3xl overflow-hidden mb-8">
+          <div className="h-96 bg-linear-to-br from-emerald-mist/50 to-mint/40 flex items-center justify-center relative">
             <div className="text-center">
-              <MapPin className="w-16 h-16 text-primary mx-auto mb-4" />
-              <p className="text-xl font-semibold text-gray-700">Interactive Map</p>
-              <p className="text-gray-500 mt-2">Map integration coming soon!</p>
-              <p className="text-sm text-gray-400 mt-1">(For demo: showing list view below)</p>
+              <MapPin className="w-16 h-16 text-lime-glow mx-auto mb-4 animate-float-soft" />
+              <p className="text-xl font-semibold text-moss font-comfortaa">Interactive Map</p>
+              <p className="text-sage mt-2 font-nunito">Map integration coming soon!</p>
+              <p className="text-sage/70 mt-1 text-sm font-nunito">(For demo: showing list view below)</p>
             </div>
             {/* Mock map pins */}
             {filteredCenters.map((center, index) => (
@@ -122,7 +122,7 @@ const Map = () => {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: index * 0.1 }}
-                className="absolute bg-red-500 rounded-full w-4 h-4 border-2 border-white shadow-lg"
+                className="absolute bg-lime-glow rounded-full w-4 h-4 border-2 border-emerald-mist/80 shadow-lg animate-glow-pulse"
                 style={{
                   top: `${20 + index * 15}%`,
                   left: `${30 + index * 10}%`
@@ -134,47 +134,48 @@ const Map = () => {
 
         {/* Centers List */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredCenters.map((center, index) => (
-            <motion.div
-              key={center.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
-            >
+            {filteredCenters.map((center, index) => (
+              <motion.div
+                key={center.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="glass-ultra rounded-3xl p-6 hover:scale-105 transition-transform animate-breathe"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-xl font-bold text-moss mb-2 font-comfortaa">
                     {center.name}
                   </h3>
-                  <p className="text-gray-600 flex items-center gap-2">
+                  <p className="text-sage flex items-center gap-2 font-nunito">
                     <MapPin className="w-4 h-4" />
                     {center.address}
                   </p>
                 </div>
-                <span className="bg-primary text-white px-3 py-1 rounded-full text-sm font-semibold">
+                <span className="glass-mint text-moss px-3 py-1 rounded-full text-sm font-quicksand font-semibold">
                   {center.category}
                 </span>
               </div>
 
               <div className="space-y-2 mb-4">
-                <p className="text-gray-700 flex items-center gap-2">
+                <p className="text-sage flex items-center gap-2 font-nunito">
                   <Phone className="w-4 h-4 text-primary" />
                   {center.phone}
                 </p>
-                <p className="text-gray-700 flex items-center gap-2">
+                <p className="text-sage flex items-center gap-2 font-nunito">
                   <Clock className="w-4 h-4 text-primary" />
                   {center.hours}
                 </p>
               </div>
 
               <div className="mb-4">
-                <p className="font-semibold text-gray-900 mb-2">Accepts:</p>
+                <p className="font-semibold text-moss mb-2 font-comfortaa">Accepts:</p>
                 <div className="flex flex-wrap gap-2">
                   {center.accepts.map((item, idx) => (
                     <span
                       key={idx}
-                      className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
+                      className="bg-emerald-mist/50 text-moss px-3 py-1 rounded-full text-sm font-nunito"
                     >
                       {item}
                     </span>
@@ -184,7 +185,7 @@ const Map = () => {
 
               <button
                 onClick={() => openInMaps(center.lat, center.lng, center.name)}
-                className="w-full bg-primary text-white px-4 py-3 rounded-lg font-semibold hover:bg-dark transition-colors flex items-center justify-center gap-2"
+                className="w-full glass-mint text-moss px-4 py-3 rounded-full font-quicksand font-semibold hover:scale-105 transition-transform flex items-center justify-center gap-2 focus:outline-none focus:ring-0"
               >
                 <Navigation className="w-5 h-5" />
                 Get Directions

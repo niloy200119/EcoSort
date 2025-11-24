@@ -43,7 +43,7 @@ const ScanResult = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-12 px-4">
+    <div className="min-h-screen bg-emerald-mist/40 py-12 px-4">
       <div className="max-w-4xl mx-auto">
         <button
           onClick={() => navigate('/scanner')}
@@ -57,17 +57,17 @@ const ScanResult = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="bg-white rounded-2xl shadow-xl overflow-hidden"
+          className="glass-ultra rounded-3xl overflow-hidden"
         >
           {/* Result Header */}
-          <div className="bg-primary text-white p-8 text-center">
+          <div className="bg-emerald-soft/20 p-8 text-center">
             <div className="flex justify-center mb-4">
               {getDisposalIcon(result.disposalMethod)}
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">
+            <h1 className="text-3xl md:text-4xl font-bold mb-2 font-comfortaa gradient-text-emerald">
               Item Identified!
             </h1>
-            <p className="text-xl opacity-90">
+            <p className="text-xl text-sage font-nunito">
               {result.itemType}
             </p>
           </div>
@@ -76,11 +76,11 @@ const ScanResult = () => {
           <div className="p-8">
             {/* Disposal Method */}
             <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-4 text-gray-900">
+              <h2 className="text-2xl font-bold mb-4 text-moss font-comfortaa">
                 Disposal Method
               </h2>
-              <div className={`border-4 rounded-lg p-6 ${getMethodColor(result.disposalMethod)}`}>
-                <p className="text-2xl font-bold text-center">
+              <div className={`border-2 rounded-2xl p-6 ${getMethodColor(result.disposalMethod)}`}>
+                <p className="text-2xl font-bold text-center font-quicksand">
                   {result.disposalMethod.toUpperCase()}
                 </p>
               </div>
@@ -88,11 +88,11 @@ const ScanResult = () => {
 
             {/* Instructions */}
             <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-4 text-gray-900">
+              <h2 className="text-2xl font-bold mb-4 text-moss font-comfortaa">
                 Instructions
               </h2>
-              <div className="bg-gray-50 rounded-lg p-6">
-                <p className="text-lg text-gray-700 leading-relaxed">
+              <div className="glass-soft rounded-2xl p-6">
+                <p className="text-lg text-sage leading-relaxed font-nunito">
                   {result.instructions}
                 </p>
               </div>
@@ -101,11 +101,11 @@ const ScanResult = () => {
             {/* Additional Info */}
             {result.additionalInfo && (
               <div className="mb-8">
-                <h2 className="text-2xl font-bold mb-4 text-gray-900">
+                <h2 className="text-2xl font-bold mb-4 text-moss font-comfortaa">
                   Additional Information
                 </h2>
-                <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded">
-                  <p className="text-gray-700">
+                <div className="glass-soft p-6 rounded-2xl">
+                  <p className="text-sage font-nunito">
                     {result.additionalInfo}
                   </p>
                 </div>
@@ -114,12 +114,12 @@ const ScanResult = () => {
 
             {/* Environmental Impact */}
             {result.impact && (
-              <div className="bg-green-50 rounded-lg p-6">
-                <h3 className="font-bold text-lg mb-2 text-primary flex items-center gap-2">
+              <div className="glass-soft rounded-2xl p-6">
+                <h3 className="font-bold text-lg mb-2 text-moss flex items-center gap-2 font-comfortaa">
                   <CheckCircle className="w-5 h-5" />
                   Environmental Impact
                 </h3>
-                <p className="text-gray-700">
+                <p className="text-sage font-nunito">
                   {result.impact}
                 </p>
               </div>
@@ -129,13 +129,13 @@ const ScanResult = () => {
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => navigate('/map')}
-                className="flex-1 bg-secondary text-white px-6 py-4 rounded-lg font-semibold hover:bg-primary transition-colors"
+                className="flex-1 glass-mint text-moss px-6 py-4 rounded-full font-quicksand font-semibold hover:scale-105 transition-transform focus:outline-none focus:ring-0"
               >
                 Find Recycling Center
               </button>
               <button
                 onClick={() => navigate('/scanner')}
-                className="flex-1 bg-primary text-white px-6 py-4 rounded-lg font-semibold hover:bg-dark transition-colors"
+                className="flex-1 glass-ultra text-moss px-6 py-4 rounded-full font-quicksand font-semibold hover:scale-105 transition-transform focus:outline-none focus:ring-0"
               >
                 Scan Another Item
               </button>
@@ -148,12 +148,12 @@ const ScanResult = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.3 }}
-          className="mt-8 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-xl p-6 text-center shadow-lg"
+          className="mt-8 glass-mint rounded-3xl p-6 text-center"
         >
-          <p className="text-2xl font-bold text-gray-900 mb-2">
+          <p className="text-2xl font-bold gradient-text-lime mb-2 font-comfortaa">
             🎉 +10 Impact Points Earned!
           </p>
-          <p className="text-gray-800">
+          <p className="text-sage font-nunito">
             Keep scanning to earn more rewards and help the environment!
           </p>
         </motion.div>

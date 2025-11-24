@@ -17,13 +17,13 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
+    <nav className="backdrop-blur-xl bg-emerald-soft/5 border-b border-emerald-soft/10 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <Recycle className="w-8 h-8 text-primary" />
-            <span className="text-2xl font-bold text-primary">EcoSort</span>
+            <Recycle className="w-8 h-8 text-lime-glow animate-glow-pulse" />
+            <span className="text-2xl font-bold gradient-text-emerald font-comfortaa">EcoSort</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -32,10 +32,10 @@ const Navbar = () => {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-lg font-medium transition-colors ${
+                className={`text-lg font-medium font-nunito px-3 py-1 rounded-full transition-all ${
                   isActive(link.path)
-                    ? 'text-primary border-b-2 border-primary'
-                    : 'text-gray-700 hover:text-primary'
+                    ? 'glass-mint text-moss shadow-sm'
+                    : 'text-sage hover:text-moss hover:bg-emerald-soft/10'
                 }`}
               >
                 {link.label}
@@ -46,12 +46,12 @@ const Navbar = () => {
           {/* Auth Buttons - Desktop */}
           <div className="hidden md:flex items-center space-x-4">
             <Link to="/login">
-              <button className="text-primary font-medium hover:text-dark transition-colors">
+              <button className="font-quicksand font-semibold text-sage hover:text-moss transition-colors focus:outline-none focus:ring-0">
                 Login
               </button>
             </Link>
             <Link to="/register">
-              <button className="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-dark transition-colors">
+              <button className="glass-ultra px-6 py-2 rounded-full font-quicksand font-semibold text-moss hover:scale-105 transition-transform focus:outline-none focus:ring-0">
                 Register
               </button>
             </Link>
@@ -60,7 +60,7 @@ const Navbar = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-gray-700"
+            className="md:hidden text-sage focus:outline-none focus:ring-0"
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -69,17 +69,17 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t">
+        <div className="md:hidden glass-ultra border-t border-emerald-soft/10">
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
                 onClick={() => setIsOpen(false)}
-                className={`block px-3 py-2 rounded-md text-base font-medium ${
+                className={`block px-3 py-2 rounded-full text-base font-medium ${
                   isActive(link.path)
-                    ? 'bg-primary text-white'
-                    : 'text-gray-700 hover:bg-green-50'
+                    ? 'glass-mint text-moss'
+                    : 'text-sage hover:bg-emerald-soft/10'
                 }`}
               >
                 {link.label}
@@ -87,12 +87,12 @@ const Navbar = () => {
             ))}
             <div className="pt-4 border-t">
               <Link to="/login" onClick={() => setIsOpen(false)}>
-                <button className="block w-full text-left px-3 py-2 text-primary font-medium">
+                <button className="block w-full text-left px-3 py-2 text-sage font-quicksand font-semibold focus:outline-none focus:ring-0">
                   Login
                 </button>
               </Link>
               <Link to="/register" onClick={() => setIsOpen(false)}>
-                <button className="block w-full text-left px-3 py-2 bg-primary text-white rounded-md font-medium mt-2">
+                <button className="block w-full text-left px-3 py-2 glass-mint rounded-full font-quicksand font-semibold mt-2 focus:outline-none focus:ring-0">
                   Register
                 </button>
               </Link>

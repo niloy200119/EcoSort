@@ -1,3 +1,359 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Comfortaa:wght@300;400;500;600;700&family=Nunito:wght@200;300;400;500;600;700;800&display=swap');
+
+@theme {
+  /* Ultra-Posh Green Palette - No Black, Only Soft Greens */
+  --color-emerald-soft: #10b981;
+  --color-mint: #6ee7b7;
+  --color-lime-glow: #84cc16;
+  --color-sage: #a3e635;
+  --color-moss: #4ade80;
+  --color-forest: #059669;
+  --color-deep-green: #064e3b;
+  --color-pastel-yellow: #fef08a;
+  --color-frost: #f0fdf4;
+  --color-mist: #ecfdf5;
+  
+  /* Elegant Typography */
+  --font-heading: 'Comfortaa', 'Quicksand', cursive, sans-serif;
+  --font-body: 'Nunito', 'Quicksand', sans-serif;
+  --font-accent: 'Quicksand', sans-serif;
+}
+
+/* Reset harsh transitions - Everything is SOFT */
+* {
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Ultra-Posh Glassmorphism */
+.glass-ultra {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1.5px solid rgba(16, 185, 129, 0.15);
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+.glass-soft {
+  background: linear-gradient(135deg, rgba(236, 253, 245, 0.7) 0%, rgba(209, 250, 229, 0.6) 100%);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(110, 231, 183, 0.2);
+  box-shadow: 0 4px 24px rgba(16, 185, 129, 0.06);
+}
+
+.glass-mint {
+  background: linear-gradient(135deg, rgba(110, 231, 183, 0.15) 0%, rgba(52, 211, 153, 0.1) 100%);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(110, 231, 183, 0.25);
+}
+
+/* Gradient Text - Bioluminescent */
+.gradient-text-emerald {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.3));
+}
+
+.gradient-text-lime {
+  background: linear-gradient(135deg, #84cc16 0%, #a3e635 50%, #d9f99d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Soft Eco Gradients - No Harsh Colors */
+.eco-mist {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #d1fae5 100%);
+}
+
+.eco-forest-soft {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 30%, #6ee7b7 100%);
+}
+
+.eco-glow {
+  background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.15), transparent 70%);
+}
+
+/* Breathing Animation - Everything Lives */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.03); opacity: 0.95; }
+}
+
+.animate-breathe {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+/* Soft Float - Gentle Vertical Motion */
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(2deg); }
+}
+
+.animate-float-soft {
+  animation: float-soft 5s ease-in-out infinite;
+}
+
+/* Leaf Drift - Organic Falling */
+@keyframes leaf-drift {
+  0% { 
+    transform: translateY(-100px) translateX(0) rotate(0deg); 
+    opacity: 0;
+  }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.4; }
+  100% { 
+    transform: translateY(100vh) translateX(50px) rotate(360deg); 
+    opacity: 0;
+  }
+}
+
+.animate-leaf-drift {
+  animation: leaf-drift 15s ease-in-out infinite;
+}
+
+/* Glow Pulse - Bioluminescent Effect */
+@keyframes glow-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3),
+                0 0 40px rgba(16, 185, 129, 0.15),
+                inset 0 0 20px rgba(16, 185, 129, 0.1);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.5),
+                0 0 60px rgba(16, 185, 129, 0.25),
+                inset 0 0 30px rgba(16, 185, 129, 0.2);
+  }
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* Tree Sprout - Growing Effect */
+@keyframes sprout {
+  0% { 
+    transform: translateY(20px) scaleY(0); 
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(10px) scaleY(0.8);
+    opacity: 0.8;
+  }
+  100% { 
+    transform: translateY(0) scaleY(1); 
+    opacity: 1;
+  }
+}
+
+.animate-sprout {
+  animation: sprout 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Shimmer Effect - Sunlight Through Leaves */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  background-size: 1000px 100%;
+  animation: shimmer 3s infinite;
+}
+
+/* Petal Open - Card Reveal */
+@keyframes petal-open {
+  0% { 
+    transform: scale(0.8) rotateX(20deg);
+    opacity: 0;
+  }
+  100% { 
+    transform: scale(1) rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+.animate-petal-open {
+  animation: petal-open 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Bounce Soft - Gentle Bounce */
+@keyframes bounce-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-bounce-soft {
+  animation: bounce-soft 2s ease-in-out infinite;
+}
+
+/* Rotate Slow - Ambient Rotation */
+@keyframes rotate-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-rotate-slow {
+  animation: rotate-slow 30s linear infinite;
+}
+
+/* Wave Motion - Gentle Sway */
+@keyframes wave {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+.animate-wave {
+  animation: wave 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+/* Firefly Glow - Ambient Particles */
+@keyframes firefly {
+  0%, 100% { 
+    opacity: 0;
+    transform: translate(0, 0) scale(0.5);
+  }
+  50% { 
+    opacity: 1;
+    transform: translate(20px, -20px) scale(1);
+  }
+}
+
+.animate-firefly {
+  animation: firefly 4s ease-in-out infinite;
+}
+
+/* Sparkle Burst - Success Animation */
+@keyframes sparkle-burst {
+  0% { 
+    transform: scale(0) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    opacity: 0.8;
+  }
+  100% { 
+    transform: scale(0.5) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.animate-sparkle-burst {
+  animation: sparkle-burst 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Custom Premium Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #10b981, #34d399, #6ee7b7);
+  border-radius: 10px;
+  border: 2px solid #f0fdf4;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #059669, #10b981, #34d399);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+/* Global Elegant Typography */
+body {
+  font-family: var(--font-body);
+  color: #064e3b;
+  background: #f0fdf4;
+  font-weight: 400;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #059669;
+}
+
+h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; }
+h2 { font-size: clamp(2rem, 4vw, 3rem); }
+h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
+
+p {
+  font-family: var(--font-body);
+  line-height: 1.8;
+  color: #065f46;
+}
+
+/* Soft Button Base */
+button, .btn {
+  font-family: var(--font-accent);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  border-radius: 24px;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+button:active {
+  transform: scale(0.96);
+}
+
+/* Selection - Soft Mint */
+::selection {
+  background: rgba(16, 185, 129, 0.3);
+  color: #064e3b;
+}
+
+/* Focus Rings - Soft Glow */
+*:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+}
+
+/* Input Fields - Soft Glass */
+input, textarea, select {
+  font-family: var(--font-body);
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(16, 185, 129, 0.2);
+  border-radius: 16px;
+  padding: 12px 16px;
+  transition: all 0.4s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15), 0 4px 12px rgba(16, 185, 129, 0.1);
+}
+
+/* Ambient Background - Always Moving */
+@keyframes ambient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.bg-ambient {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7, #d1fae5, #a7f3d0);
+  background-size: 400% 400%;
+  animation: ambient-shift 20s ease infinite;
+}
+
+/* Card Hover - Soft Lift */
+.card-hover:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 12px 40px rgba(16, 185, 129, 0.15);
+}
+
+/* Text Shadows - Soft Depth */
+.text-shadow-soft {
+  text-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+}
