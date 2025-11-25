@@ -7,7 +7,7 @@ import Scanner from './pages/Scanner';
 import ScanResult from './pages/ScanResult';
 import Map from './pages/Map';
 import Guide from './pages/Guide';
-import Dashboard from './pages/Dashboard';
+import DashboardNew from './pages/DashboardNew';
 import LoginNew from './pages/LoginNew';
 import RegisterNew from './pages/RegisterNew';
 import AdminDashboard from './pages/AdminDashboard';
@@ -26,7 +26,7 @@ function App() {
             <Route path="/guide" element={<Guide />} />
             <Route path="/dashboard" element={
               <ProtectedRoute requireRole="citizen">
-                <Dashboard />
+                <DashboardNew />
               </ProtectedRoute>
             } />
             <Route path="/admin/dashboard" element={

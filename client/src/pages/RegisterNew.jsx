@@ -103,7 +103,7 @@ export default function Register() {
 
   const roleStyles = {
     citizen: {
-      bg: 'bg-emerald-mist/60',
+      bg: 'bg-citizen-auth',
       glass: 'glass-ultra',
       text: 'text-moss',
       textSoft: 'text-sage',
@@ -114,7 +114,7 @@ export default function Register() {
       icon: Recycle
     },
     admin: {
-      bg: 'bg-amber-50/60',
+      bg: 'bg-admin-auth',
       glass: 'glass-ultra',
       text: 'text-amber-900',
       textSoft: 'text-amber-700',

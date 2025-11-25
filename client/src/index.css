@@ -357,3 +357,12 @@ input:focus, textarea:focus, select:focus {
 .text-shadow-soft {
   text-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
 }
+
+/* Auth Page Backgrounds - Role-Based */
+.bg-citizen-auth {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%);
+}
+
+.bg-admin-auth {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fde68a 100%);
+}

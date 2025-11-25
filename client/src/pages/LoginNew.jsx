@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Mail, Lock, Recycle, Shield, Users, CreditCard } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import useAuthStore from '../store/authStore';
 import { useTheme } from '../hooks/useTheme';
 
@@ -73,7 +73,7 @@ export default function Login() {
 
   const roleStyles = {
     citizen: {
-      bg: 'bg-emerald-mist/60',
+      bg: 'bg-citizen-auth',
       glass: 'glass-ultra',
       text: 'text-moss',
       textSoft: 'text-sage',
@@ -84,7 +84,7 @@ export default function Login() {
       icon: Recycle
     },
     admin: {
-      bg: 'bg-amber-50/60',
+      bg: 'bg-admin-auth',
       glass: 'glass-ultra',
       text: 'text-amber-900',
       textSoft: 'text-amber-700',
