@@ -163,12 +163,6 @@ When your CNN model is ready:
 
 This project is created for academic purposes.
 
-## 🙏 Acknowledgments
-
-- Built for university submission
-- Mock AI approach recommended by Gemini 3.0
-- Designed to demonstrate full-stack integration capabilities
-
 ## 🔮 Future Enhancements
 
 - [ ] Real CNN model integration
