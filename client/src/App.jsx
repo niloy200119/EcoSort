@@ -7,7 +7,7 @@ import Scanner from './pages/Scanner';
 import ScanResult from './pages/ScanResult';
 import Map from './pages/Map';
 import Guide from './pages/Guide';
-import DashboardNew from './pages/DashboardNew';
+import DashboardNew from './pages/DashboardEnhanced';
 import LoginNew from './pages/LoginNew';
 import RegisterNew from './pages/RegisterNew';
 import AdminDashboard from './pages/AdminDashboard';

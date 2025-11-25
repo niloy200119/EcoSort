@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Mail, Lock, User, MapPin, Recycle, CreditCard, Building2, Shield, Users } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import useAuthStore from '../store/authStore';
 import { useTheme } from '../hooks/useTheme';
 
