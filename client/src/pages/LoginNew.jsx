@@ -1,0 +1,288 @@
+import { useState } from 'react';
+import { Mail, Lock, Recycle, Shield, Users, CreditCard } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
+import useAuthStore from '../store/authStore';
+import { useTheme } from '../hooks/useTheme';
+
+export default function Login() {
+  const [role, setRole] = useState('citizen'); // 'citizen' or 'admin'
+  const [formData, setFormData] = useState({
+    email: '',
+    nid: '',
+    password: ''
+  });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  
+  const navigate = useNavigate();
+  const login = useAuthStore((state) => state.login);
+  const { switchTheme } = useTheme();
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+    setError('');
+  };
+
+  const handleRoleSwitch = (newRole) => {
+    setRole(newRole);
+    switchTheme(newRole);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    // Mock login - in real app, would validate with backend
+    setTimeout(() => {
+      if (formData.email && formData.password && formData.nid) {
+        // Mock user data
+        const userData = {
+          name: role === 'citizen' ? 'John Citizen' : 'Admin Officer',
+          email: formData.email,
+          nid: formData.nid,
+          role: role,
+          location: role === 'citizen' ? 'Dhaka' : 'Dhaka North City Corporation',
+          ...(role === 'admin' && {
+            organization: 'Department of Environment',
+            designation: 'Environmental Officer'
+          }),
+          points: role === 'citizen' ? 1250 : null,
+        };
+
+        login(userData);
+        switchTheme(role);
+
+        if (role === 'citizen') {
+          navigate('/dashboard');
+        } else {
+          navigate('/admin/dashboard');
+        }
+        
+        setLoading(false);
+      } else {
+        setError('Please fill in all fields');
+        setLoading(false);
+      }
+    }, 1000);
+  };
+
+  const roleStyles = {
+    citizen: {
+      bg: 'bg-emerald-mist/60',
+      glass: 'glass-ultra',
+      text: 'text-moss',
+      textSoft: 'text-sage',
+      accent: 'text-lime-glow',
+      buttonActive: 'glass-mint',
+      buttonInactive: 'glass-soft',
+      glow: 'animate-glow-pulse',
+      icon: Recycle
+    },
+    admin: {
+      bg: 'bg-amber-50/60',
+      glass: 'glass-ultra',
+      text: 'text-amber-900',
+      textSoft: 'text-amber-700',
+      accent: 'text-amber-500',
+      buttonActive: 'bg-amber-400/60 backdrop-blur-xl',
+      buttonInactive: 'bg-amber-100/40 backdrop-blur-md',
+      glow: 'animate-pulse',
+      icon: Shield
+    }
+  };
+
+  const currentStyle = roleStyles[role];
+  const IconComponent = currentStyle.icon;
+
+  return (
+    <div className={`min-h-screen ${currentStyle.bg} flex items-center justify-center py-12 px-4 transition-colors duration-700`}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="max-w-md w-full"
+      >
+        {/* Logo and Header */}
+        <div className="text-center mb-8">
+          <div className="flex justify-center mb-4">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={role}
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                exit={{ scale: 0, rotate: 180 }}
+                transition={{ duration: 0.5, type: "spring" }}
+              >
+                <IconComponent className={`w-16 h-16 ${currentStyle.accent} ${currentStyle.glow}`} />
+              </motion.div>
+            </AnimatePresence>
+          </div>
+          <h1 className={`text-4xl font-bold mb-2 font-comfortaa ${currentStyle.text}`}>
+            Welcome Back!
+          </h1>
+          <p className={`${currentStyle.textSoft} font-nunito`}>
+            {role === 'citizen' ? 'Login to continue your eco journey' : 'Access administrative dashboard'}
+          </p>
+        </div>
+
+        {/* Role Selection */}
+        <div className="flex gap-4 mb-8">
+          <button
+            type="button"
+            onClick={() => handleRoleSwitch('citizen')}
+            className={`flex-1 py-4 px-6 rounded-2xl font-quicksand font-semibold transition-all focus:outline-none focus:ring-0 ${
+              role === 'citizen' ? currentStyle.buttonActive : currentStyle.buttonInactive
+            }`}
+          >
+            <Users className="w-5 h-5 inline-block mr-2" />
+            Citizen
+          </button>
+          <button
+            type="button"
+            onClick={() => handleRoleSwitch('admin')}
+            className={`flex-1 py-4 px-6 rounded-2xl font-quicksand font-semibold transition-all focus:outline-none focus:ring-0 ${
+              role === 'admin' ? currentStyle.buttonActive : currentStyle.buttonInactive
+            }`}
+          >
+            <Shield className="w-5 h-5 inline-block mr-2" />
+            Admin
+          </button>
+        </div>
+
+        {/* Login Form */}
+        <div className={`${currentStyle.glass} rounded-3xl p-8`}>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email Field */}
+            <div>
+              <label htmlFor="email" className={`block text-sm font-semibold ${currentStyle.text} mb-2 font-nunito`}>
+                Email Address
+              </label>
+              <div className="relative">
+                <Mail className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${currentStyle.textSoft} w-5 h-5`} />
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={`w-full pl-12 pr-4 py-3 ${currentStyle.buttonInactive} border border-current/20 rounded-full ${currentStyle.text} placeholder:text-current/60 focus:outline-none focus:ring-0`}
+                  placeholder="your@email.com"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* NID Field */}
+            <div>
+              <label htmlFor="nid" className={`block text-sm font-semibold ${currentStyle.text} mb-2 font-nunito`}>
+                National ID (NID)
+              </label>
+              <div className="relative">
+                <CreditCard className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${currentStyle.textSoft} w-5 h-5`} />
+                <input
+                  type="text"
+                  id="nid"
+                  name="nid"
+                  value={formData.nid}
+                  onChange={handleChange}
+                  className={`w-full pl-12 pr-4 py-3 ${currentStyle.buttonInactive} border border-current/20 rounded-full ${currentStyle.text} placeholder:text-current/60 focus:outline-none focus:ring-0`}
+                  placeholder="Enter your NID"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <label htmlFor="password" className={`block text-sm font-semibold ${currentStyle.text} mb-2 font-nunito`}>
+                Password
+              </label>
+              <div className="relative">
+                <Lock className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${currentStyle.textSoft} w-5 h-5`} />
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className={`w-full pl-12 pr-4 py-3 ${currentStyle.buttonInactive} border border-current/20 rounded-full ${currentStyle.text} placeholder:text-current/60 focus:outline-none focus:ring-0`}
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Forgot Password */}
+            <div className="flex justify-end">
+              <a href="#" className={`text-sm ${currentStyle.text} hover:${currentStyle.accent} font-nunito`}>
+                Forgot password?
+              </a>
+            </div>
+
+            {/* Error Message */}
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="bg-red-50/80 border border-red-300 text-red-700 px-4 py-3 rounded-2xl font-nunito"
+                >
+                  {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-4 rounded-full font-quicksand font-semibold transition-transform focus:outline-none focus:ring-0 ${
+                loading
+                  ? 'bg-gray-300/40 cursor-not-allowed text-gray-600'
+                  : `${currentStyle.buttonActive} ${currentStyle.text} hover:scale-105`
+              }`}
+            >
+              {loading ? 'Logging in...' : 'Login'}
+            </button>
+          </form>
+
+          {/* Divider */}
+          <div className="my-6 flex items-center">
+            <div className={`flex-1 border-t border-current/20 ${currentStyle.textSoft}`}></div>
+            <span className={`px-4 ${currentStyle.textSoft} text-sm font-nunito`}>or</span>
+            <div className={`flex-1 border-t border-current/20 ${currentStyle.textSoft}`}></div>
+          </div>
+
+          {/* Register Link */}
+          <div className="text-center">
+            <p className={`${currentStyle.textSoft} font-nunito`}>
+              Don't have an account?{' '}
+              <Link to="/register" className={`${currentStyle.text} font-semibold hover:${currentStyle.accent}`}>
+                Register here
+              </Link>
+            </p>
+          </div>
+
+          {/* Guest Access */}
+          {role === 'citizen' && (
+            <div className="text-center mt-4">
+              <button
+                type="button"
+                onClick={() => navigate('/')}
+                className={`${currentStyle.textSoft} text-sm hover:${currentStyle.text} font-nunito`}
+              >
+                Continue as Guest
+              </button>
+            </div>
+          )}
+        </div>
+      </motion.div>
+    </div>
+  );
+}
