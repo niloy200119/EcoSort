@@ -33,4 +33,19 @@ export const themes = {
     textSoft: '#92400e',
     textMuted: '#6b7280',
   },
+  'waste-manager': {
+    name: 'waste-manager',
+    primary: '#059669', // forest green
+    primarySoft: '#10b981',
+    primaryMist: '#d1fae5',
+    primaryGlow: '#34d399',
+    accent: '#047857',
+    background: '#064e3b',
+    glass: 'rgba(5, 150, 105, 0.2)',
+    glassSoft: 'rgba(16, 185, 129, 0.15)',
+    glassUltra: 'rgba(5, 150, 105, 0.3)',
+    text: '#ecfdf5',
+    textSoft: '#d1fae5',
+    textMuted: '#a7f3d0',
+  },
 };

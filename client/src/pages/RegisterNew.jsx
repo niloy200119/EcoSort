@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Mail, Lock, User, MapPin, Recycle, CreditCard, Building2, Shield, Users } from 'lucide-react';
+import { Mail, Lock, User, MapPin, Recycle, CreditCard, Building2, Shield, Users, Truck } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import useAuthStore from '../store/authStore';
 import { useTheme } from '../hooks/useTheme';
 
 export default function Register() {
-  const [role, setRole] = useState('citizen'); // 'citizen' or 'admin'
+  const [role, setRole] = useState('citizen'); // 'citizen', 'waste-manager', or 'admin'
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -72,6 +72,12 @@ export default function Register() {
       return;
     }
 
+    if (role === 'waste-manager' && !formData.organization) {
+      setError('Organization name is required for waste managers');
+      setLoading(false);
+      return;
+    }
+
     // Mock registration - in real app, would call backend API
     setTimeout(() => {
       const userData = {
@@ -80,7 +86,7 @@ export default function Register() {
         nid: formData.nid,
         location: formData.location,
         role: role,
-        ...(role === 'admin' && {
+        ...((role === 'admin' || role === 'waste-manager') && {
           organization: formData.organization,
           designation: formData.designation
         }),
@@ -93,6 +99,8 @@ export default function Register() {
 
       if (role === 'citizen') {
         navigate('/dashboard');
+      } else if (role === 'waste-manager') {
+        navigate('/waste-manager/dashboard');
       } else {
         navigate('/admin/dashboard');
       }
@@ -112,6 +120,17 @@ export default function Register() {
       buttonInactive: 'glass-soft',
       glow: 'animate-glow-pulse',
       icon: Recycle
+    },
+    'waste-manager': {
+      bg: 'bg-forest-auth',
+      glass: 'glass-ultra',
+      text: 'text-emerald-50',
+      textSoft: 'text-emerald-200',
+      accent: 'text-emerald-400',
+      buttonActive: 'bg-emerald-600/60 backdrop-blur-xl',
+      buttonInactive: 'bg-emerald-900/40 backdrop-blur-md',
+      glow: 'animate-breathe',
+      icon: Truck
     },
     admin: {
       bg: 'bg-admin-auth',
@@ -156,31 +175,41 @@ export default function Register() {
             Join EcoSort
           </h1>
           <p className={`${currentStyle.textSoft} font-nunito`}>
-            {role === 'citizen' ? 'Start your journey to a greener future' : 'Monitor and manage waste systems'}
+            {role === 'citizen' ? 'Start your journey to a greener future' : role === 'waste-manager' ? 'Manage waste collection operations' : 'Monitor and manage waste systems'}
           </p>
         </div>
 
         {/* Role Selection */}
-        <div className="flex gap-4 mb-8">
+        <div className="flex gap-3 mb-8">
           <button
             type="button"
             onClick={() => handleRoleSwitch('citizen')}
-            className={`flex-1 py-4 px-6 rounded-2xl font-quicksand font-semibold transition-all focus:outline-none focus:ring-0 ${
+            className={`flex-1 py-3 px-4 rounded-2xl font-quicksand font-semibold transition-all focus:outline-none focus:ring-0 ${
               role === 'citizen' ? currentStyle.buttonActive : currentStyle.buttonInactive
             }`}
           >
-            <Users className="w-5 h-5 inline-block mr-2" />
-            Citizen
+            <Users className="w-4 h-4 inline-block mr-1" />
+            <span className="text-sm">Citizen</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleRoleSwitch('waste-manager')}
+            className={`flex-1 py-3 px-4 rounded-2xl font-quicksand font-semibold transition-all focus:outline-none focus:ring-0 ${
+              role === 'waste-manager' ? currentStyle.buttonActive : currentStyle.buttonInactive
+            }`}
+          >
+            <Truck className="w-4 h-4 inline-block mr-1" />
+            <span className="text-sm">Manager</span>
           </button>
           <button
             type="button"
             onClick={() => handleRoleSwitch('admin')}
-            className={`flex-1 py-4 px-6 rounded-2xl font-quicksand font-semibold transition-all focus:outline-none focus:ring-0 ${
+            className={`flex-1 py-3 px-4 rounded-2xl font-quicksand font-semibold transition-all focus:outline-none focus:ring-0 ${
               role === 'admin' ? currentStyle.buttonActive : currentStyle.buttonInactive
             }`}
           >
-            <Shield className="w-5 h-5 inline-block mr-2" />
-            Administrator
+            <Shield className="w-4 h-4 inline-block mr-1" />
+            <span className="text-sm">Admin</span>
           </button>
         </div>
 
@@ -253,7 +282,7 @@ export default function Register() {
               {/* Location Field */}
               <div>
                 <label htmlFor="location" className={`block text-sm font-semibold ${currentStyle.text} mb-2 font-nunito`}>
-                  {role === 'citizen' ? 'City' : 'Municipality/Division'}
+                  {role === 'citizen' ? 'City' : 'Work Zone/Division'}
                 </label>
                 <div className="relative">
                   <MapPin className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${currentStyle.textSoft} w-5 h-5`} />
@@ -264,16 +293,16 @@ export default function Register() {
                     value={formData.location}
                     onChange={handleChange}
                     className={`w-full pl-12 pr-4 py-3 ${currentStyle.buttonInactive} border border-current/20 rounded-full ${currentStyle.text} placeholder:text-current/60 focus:outline-none focus:ring-0`}
-                    placeholder={role === 'citizen' ? 'Sylhet, Bangladesh' : 'Dhaka North City Corporation'}
+                    placeholder={role === 'citizen' ? 'Sylhet, Bangladesh' : role === 'waste-manager' ? 'Dhaka Zone 3' : 'Dhaka North City Corporation'}
                     required
                   />
                 </div>
               </div>
             </div>
 
-            {/* Admin-only fields */}
+            {/* Admin and Waste Manager fields */}
             <AnimatePresence>
-              {role === 'admin' && (
+              {(role === 'admin' || role === 'waste-manager') && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
@@ -293,8 +322,8 @@ export default function Register() {
                         value={formData.organization}
                         onChange={handleChange}
                         className={`w-full pl-12 pr-4 py-3 ${currentStyle.buttonInactive} border border-current/20 rounded-full ${currentStyle.text} placeholder:text-current/60 focus:outline-none focus:ring-0`}
-                        placeholder="Department of Environment"
-                        required={role === 'admin'}
+                        placeholder={role === 'admin' ? 'Department of Environment' : 'City Waste Management'}
+                        required={role === 'admin' || role === 'waste-manager'}
                       />
                     </div>
                   </div>
@@ -304,7 +333,11 @@ export default function Register() {
                       Designation
                     </label>
                     <div className="relative">
-                      <Shield className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${currentStyle.textSoft} w-5 h-5`} />
+                      {role === 'admin' ? (
+                        <Shield className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${currentStyle.textSoft} w-5 h-5`} />
+                      ) : (
+                        <Truck className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${currentStyle.textSoft} w-5 h-5`} />
+                      )}
                       <input
                         type="text"
                         id="designation"
@@ -312,7 +345,7 @@ export default function Register() {
                         value={formData.designation}
                         onChange={handleChange}
                         className={`w-full pl-12 pr-4 py-3 ${currentStyle.buttonInactive} border border-current/20 rounded-full ${currentStyle.text} placeholder:text-current/60 focus:outline-none focus:ring-0`}
-                        placeholder="Environmental Officer"
+                        placeholder={role === 'admin' ? 'Environmental Officer' : 'Collection Manager'}
                       />
                     </div>
                   </div>

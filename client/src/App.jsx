@@ -11,6 +11,7 @@ import DashboardNew from './pages/DashboardEnhanced';
 import LoginNew from './pages/LoginNew';
 import RegisterNew from './pages/RegisterNew';
 import AdminDashboard from './pages/AdminDashboard';
+import WasteManagerDashboard from './pages/WasteManagerDashboard';
 
 function App() {
   return (
@@ -27,6 +28,11 @@ function App() {
             <Route path="/dashboard" element={
               <ProtectedRoute requireRole="citizen">
                 <DashboardNew />
+              </ProtectedRoute>
+            } />
+            <Route path="/waste-manager/dashboard" element={
+              <ProtectedRoute requireRole="waste-manager">
+                <WasteManagerDashboard />
               </ProtectedRoute>
             } />
             <Route path="/admin/dashboard" element={

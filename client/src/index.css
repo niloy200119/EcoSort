@@ -1,6 +1,13 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Comfortaa:wght@300;400;500;600;700&family=Nunito:wght@200;300;400;500;600;700;800&display=swap');
 
+/* Global Background - Forest Green */
+body {
+  background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #065f46 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
 @theme {
   /* Ultra-Posh Green Palette - No Black, Only Soft Greens */
   --color-emerald-soft: #10b981;
@@ -361,6 +368,10 @@ input:focus, textarea:focus, select:focus {
 /* Auth Page Backgrounds - Role-Based */
 .bg-citizen-auth {
   background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%);
+}
+
+.bg-forest-auth {
+  background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
 }
 
 .bg-admin-auth {

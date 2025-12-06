@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Mail, Lock, Recycle, Shield, Users, CreditCard } from 'lucide-react';
+import { Mail, Lock, Recycle, Shield, Users, CreditCard, Truck } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import useAuthStore from '../store/authStore';
 import { useTheme } from '../hooks/useTheme';
 
 export default function Login() {
-  const [role, setRole] = useState('citizen'); // 'citizen' or 'admin'
+  const [role, setRole] = useState('citizen'); // 'citizen', 'waste-manager', or 'admin'
   const [formData, setFormData] = useState({
     email: '',
     nid: '',
@@ -42,14 +42,18 @@ export default function Login() {
       if (formData.email && formData.password && formData.nid) {
         // Mock user data
         const userData = {
-          name: role === 'citizen' ? 'John Citizen' : 'Admin Officer',
+          name: role === 'citizen' ? 'John Citizen' : role === 'waste-manager' ? 'Manager Rahman' : 'Admin Officer',
           email: formData.email,
           nid: formData.nid,
           role: role,
-          location: role === 'citizen' ? 'Dhaka' : 'Dhaka North City Corporation',
+          location: role === 'citizen' ? 'Dhaka' : role === 'waste-manager' ? 'Dhaka Zone 3' : 'Dhaka North City Corporation',
           ...(role === 'admin' && {
             organization: 'Department of Environment',
             designation: 'Environmental Officer'
+          }),
+          ...(role === 'waste-manager' && {
+            organization: 'City Waste Management',
+            designation: 'Collection Manager'
           }),
           points: role === 'citizen' ? 1250 : null,
         };
@@ -59,6 +63,8 @@ export default function Login() {
 
         if (role === 'citizen') {
           navigate('/dashboard');
+        } else if (role === 'waste-manager') {
+          navigate('/waste-manager/dashboard');
         } else {
           navigate('/admin/dashboard');
         }
@@ -82,6 +88,17 @@ export default function Login() {
       buttonInactive: 'glass-soft',
       glow: 'animate-glow-pulse',
       icon: Recycle
+    },
+    'waste-manager': {
+      bg: 'bg-forest-auth',
+      glass: 'glass-ultra',
+      text: 'text-emerald-50',
+      textSoft: 'text-emerald-200',
+      accent: 'text-emerald-400',
+      buttonActive: 'bg-emerald-600/60 backdrop-blur-xl',
+      buttonInactive: 'bg-emerald-900/40 backdrop-blur-md',
+      glow: 'animate-breathe',
+      icon: Truck
     },
     admin: {
       bg: 'bg-admin-auth',
@@ -126,31 +143,41 @@ export default function Login() {
             Welcome Back!
           </h1>
           <p className={`${currentStyle.textSoft} font-nunito`}>
-            {role === 'citizen' ? 'Login to continue your eco journey' : 'Access administrative dashboard'}
+            {role === 'citizen' ? 'Login to continue your eco journey' : role === 'waste-manager' ? 'Manage waste collection operations' : 'Access administrative dashboard'}
           </p>
         </div>
 
         {/* Role Selection */}
-        <div className="flex gap-4 mb-8">
+        <div className="flex gap-3 mb-8">
           <button
             type="button"
             onClick={() => handleRoleSwitch('citizen')}
-            className={`flex-1 py-4 px-6 rounded-2xl font-quicksand font-semibold transition-all focus:outline-none focus:ring-0 ${
+            className={`flex-1 py-3 px-4 rounded-2xl font-quicksand font-semibold transition-all focus:outline-none focus:ring-0 ${
               role === 'citizen' ? currentStyle.buttonActive : currentStyle.buttonInactive
             }`}
           >
-            <Users className="w-5 h-5 inline-block mr-2" />
-            Citizen
+            <Users className="w-4 h-4 inline-block mr-1" />
+            <span className="text-sm">Citizen</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleRoleSwitch('waste-manager')}
+            className={`flex-1 py-3 px-4 rounded-2xl font-quicksand font-semibold transition-all focus:outline-none focus:ring-0 ${
+              role === 'waste-manager' ? currentStyle.buttonActive : currentStyle.buttonInactive
+            }`}
+          >
+            <Truck className="w-4 h-4 inline-block mr-1" />
+            <span className="text-sm">Manager</span>
           </button>
           <button
             type="button"
             onClick={() => handleRoleSwitch('admin')}
-            className={`flex-1 py-4 px-6 rounded-2xl font-quicksand font-semibold transition-all focus:outline-none focus:ring-0 ${
+            className={`flex-1 py-3 px-4 rounded-2xl font-quicksand font-semibold transition-all focus:outline-none focus:ring-0 ${
               role === 'admin' ? currentStyle.buttonActive : currentStyle.buttonInactive
             }`}
           >
-            <Shield className="w-5 h-5 inline-block mr-2" />
-            Admin
+            <Shield className="w-4 h-4 inline-block mr-1" />
+            <span className="text-sm">Admin</span>
           </button>
         </div>
 

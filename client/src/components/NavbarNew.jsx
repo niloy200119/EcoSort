@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Recycle, Menu, X, Shield, LogOut, User } from 'lucide-react';
+import { Recycle, Menu, X, Shield, LogOut, User, Truck } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import useAuthStore from '../store/authStore';
 import { useTheme } from '../hooks/useTheme';
@@ -37,7 +37,20 @@ export default function Navbar() {
     { path: '/guide', label: 'Guide' },
   ];
 
-  const navLinks = !isAuthenticated ? citizenLinks.filter(l => l.path !== '/dashboard') : role === 'admin' ? adminLinks : citizenLinks;
+  const wasteManagerLinks = [
+    { path: '/', label: 'Home' },
+    { path: '/waste-manager/dashboard', label: 'Dashboard' },
+    { path: '/map', label: 'Map' },
+    { path: '/guide', label: 'Guide' },
+  ];
+
+  const navLinks = !isAuthenticated 
+    ? citizenLinks.filter(l => l.path !== '/dashboard') 
+    : role === 'admin' 
+    ? adminLinks 
+    : role === 'waste-manager'
+    ? wasteManagerLinks
+    : citizenLinks;
 
   const handleLogout = () => {
     logout();
@@ -55,6 +68,15 @@ export default function Navbar() {
     button: 'bg-amber-400/60 backdrop-blur-xl text-amber-900',
     buttonHover: 'hover:scale-105',
     icon: Shield,
+  } : role === 'waste-manager' ? {
+    bg: 'backdrop-blur-xl bg-emerald-900/40 border-b border-emerald-600/30',
+    logo: 'text-emerald-400',
+    logoGlow: 'animate-breathe',
+    textActive: 'bg-emerald-600/60 backdrop-blur-md text-emerald-50',
+    textInactive: 'text-emerald-200 hover:text-emerald-50 hover:bg-emerald-700/30',
+    button: 'bg-emerald-600/60 backdrop-blur-xl text-emerald-50',
+    buttonHover: 'hover:scale-105',
+    icon: Truck,
   } : {
     bg: 'backdrop-blur-xl bg-emerald-soft/5 border-b border-emerald-soft/10',
     logo: 'text-lime-glow',
@@ -75,8 +97,9 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <IconComponent className={`w-8 h-8 ${navStyle.logo} ${navStyle.logoGlow}`} />
-            <span className={`text-2xl font-bold font-comfortaa ${role === 'admin' ? 'text-amber-900' : 'gradient-text-emerald'}`}>
+            <span className={`text-2xl font-bold font-comfortaa ${role === 'admin' ? 'text-amber-900' : role === 'waste-manager' ? 'text-emerald-50' : 'gradient-text-emerald'}`}>
               EcoSort {role === 'admin' && <span className="text-sm font-normal">Admin</span>}
+              {role === 'waste-manager' && <span className="text-sm font-normal">Manager</span>}
             </span>
           </Link>
 
