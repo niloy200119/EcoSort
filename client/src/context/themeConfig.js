@@ -35,17 +35,17 @@ export const themes = {
   },
   'waste-manager': {
     name: 'waste-manager',
-    primary: '#3b82f6', // blue
-    primarySoft: '#60a5fa',
-    primaryMist: '#dbeafe',
-    primaryGlow: '#93c5fd',
-    accent: '#2563eb',
-    background: 'linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #1e3a5f 100%)', // Bluish background for waste manager only
-    glass: 'rgba(59, 130, 246, 0.2)',
-    glassSoft: 'rgba(96, 165, 250, 0.15)',
-    glassUltra: 'rgba(59, 130, 246, 0.3)',
+    primary: '#6b7280', // ash gray
+    primarySoft: '#9ca3af',
+    primaryMist: '#e5e7eb',
+    primaryGlow: '#9ca3af',
+    accent: '#4b5563',
+    background: 'linear-gradient(135deg, #374151 0%, #6b7280 50%, #374151 100%)', // Ash gray background for waste manager only
+    glass: 'rgba(107, 114, 128, 0.2)',
+    glassSoft: 'rgba(156, 163, 175, 0.15)',
+    glassUltra: 'rgba(107, 114, 128, 0.3)',
     text: '#ffffff',
-    textSoft: '#dbeafe',
-    textMuted: '#93c5fd',
+    textSoft: '#e5e7eb',
+    textMuted: '#d1d5db',
   },
 };

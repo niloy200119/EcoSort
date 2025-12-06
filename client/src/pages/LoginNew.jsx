@@ -341,7 +341,18 @@ export default function Login() {
           )}
         </div>
       </motion.div>
-      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
+      <ToastContainer 
+        position="top-right" 
+        autoClose={3000} 
+        theme="dark"
+        style={{
+          '--toastify-color-success': '#2E6F40',
+          '--toastify-color-error': '#2E6F40',
+          '--toastify-color-warning': '#2E6F40',
+          '--toastify-color-info': '#2E6F40',
+          '--toastify-text-color-light': '#ffffff'
+        }}
+      />
     </div>
   );
 }
