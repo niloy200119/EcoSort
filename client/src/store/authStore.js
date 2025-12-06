@@ -5,7 +5,7 @@ const useAuthStore = create(
   persist(
     (set) => ({
       user: null,
-      role: null, // 'citizen' or 'admin'
+      role: null, // 'citizen', 'waste-manager', or 'admin'
       isAuthenticated: false,
       
       login: (userData) => {
