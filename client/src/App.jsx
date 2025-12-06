@@ -2,10 +2,12 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NavbarNew from './components/NavbarNew';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
+import AIChatbot from './components/AIChatbot';
 import Home from './pages/Home';
 import Scanner from './pages/Scanner';
 import ScanResult from './pages/ScanResult';
 import Map from './pages/Map';
+import LiveWasteMap from './pages/LiveWasteMap';
 import Guide from './pages/Guide';
 import DashboardNew from './pages/DashboardEnhanced';
 import LoginNew from './pages/LoginNew';
@@ -24,6 +26,7 @@ function App() {
             <Route path="/scanner" element={<Scanner />} />
             <Route path="/scan-result" element={<ScanResult />} />
             <Route path="/map" element={<Map />} />
+            <Route path="/live-map" element={<LiveWasteMap />} />
             <Route path="/guide" element={<Guide />} />
             <Route path="/dashboard" element={
               <ProtectedRoute requireRole="citizen">
@@ -45,6 +48,7 @@ function App() {
           </Routes>
         </main>
         <Footer />
+        <AIChatbot />
       </div>
     </Router>
   );
