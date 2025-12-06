@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { 
   Truck, MapPin, Calendar, CheckCircle, Clock, 
-  AlertTriangle, Users, Package, TrendingUp, BarChart3
+  AlertTriangle, Users, Package, TrendingUp, BarChart3, Shield
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import useAuthStore from '../store/authStore';
 import Chat from '../components/Chat';
 
