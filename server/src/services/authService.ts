@@ -61,7 +61,6 @@ class AuthService {
 
     const tokens = this.generateTokens(user);
 
-    // Save refresh token to database
     await User.findByIdAndUpdate(user._id, {
       refreshToken: tokens.refreshToken,
     });
@@ -87,12 +86,10 @@ class AuthService {
 
     const tokens = this.generateTokens(user);
 
-    // Save refresh token to database
     await User.findByIdAndUpdate(user._id, {
       refreshToken: tokens.refreshToken,
     });
 
-    // Remove password from user object
     user.password = undefined as any;
 
     return { user, tokens };
@@ -117,7 +114,6 @@ class AuthService {
 
       const tokens = this.generateTokens(user);
 
-      // Update refresh token in database
       await User.findByIdAndUpdate(user._id, {
         refreshToken: tokens.refreshToken,
       });

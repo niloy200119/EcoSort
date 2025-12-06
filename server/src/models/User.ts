@@ -64,7 +64,6 @@ const userSchema = new Schema<IUser>(
   },
 );
 
-// Hash password before saving
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
@@ -79,14 +78,12 @@ userSchema.pre("save", async function (next) {
   }
 });
 
-// Method to compare password
 userSchema.methods.comparePassword = async function (
   candidatePassword: string,
 ): Promise<boolean> {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-// Remove password and refresh token from JSON output
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
