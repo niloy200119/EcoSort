@@ -3,13 +3,12 @@ import helmet from "helmet";
 import cors from "cors";
 
 import { config } from "./config/env";
+import { errorHandler, notFound } from "./middlewares/errorHandler";
 
 const app: Application = express();
 
-// Security middleware
 app.use(helmet());
 
-// CORS configuration
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -48,5 +47,9 @@ app.get("/", (_req: Request, res: Response) => {
     },
   });
 });
+
+app.use(notFound);
+
+app.use(errorHandler);
 
 export default app;
