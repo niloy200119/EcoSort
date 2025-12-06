@@ -14,6 +14,7 @@ import LoginNew from './pages/LoginNew';
 import RegisterNew from './pages/RegisterNew';
 import AdminDashboard from './pages/AdminDashboard';
 import WasteManagerDashboard from './pages/WasteManagerDashboard';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
             } />
             <Route path="/login" element={<LoginNew />} />
             <Route path="/register" element={<RegisterNew />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
         <Footer />

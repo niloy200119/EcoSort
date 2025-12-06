@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { MapPin, Navigation, Phone, Clock, Truck, MapPinned, Loader, AlertCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -85,14 +84,18 @@ export default function LiveWasteMap() {
 
   // Simulate live waste collection vehicles
   useEffect(() => {
-    const mockVehicles = [
-      { id: 'V1', name: 'Truck DHK-1234', lat: 23.7506, lng: 90.3756, status: 'collecting', zone: 'Zone 1' },
-      { id: 'V2', name: 'Truck DHK-5678', lat: 23.7689, lng: 90.3912, status: 'in-transit', zone: 'Zone 2' },
-      { id: 'V3', name: 'Truck DHK-9012', lat: 23.8103, lng: 90.4125, status: 'collecting', zone: 'Zone 3' },
-      { id: 'V4', name: 'Truck DHK-3456', lat: 23.8456, lng: 90.3598, status: 'returning', zone: 'Zone 4' },
-    ];
-    
-    setLiveVehicles(mockVehicles);
+    const initializeMockVehicles = () => {
+      const mockVehicles = [
+        { id: 'V1', name: 'Truck DHK-1234', lat: 23.7506, lng: 90.3756, status: 'collecting', zone: 'Zone 1' },
+        { id: 'V2', name: 'Truck DHK-5678', lat: 23.7689, lng: 90.3912, status: 'in-transit', zone: 'Zone 2' },
+        { id: 'V3', name: 'Truck DHK-9012', lat: 23.8103, lng: 90.4125, status: 'collecting', zone: 'Zone 3' },
+        { id: 'V4', name: 'Truck DHK-3456', lat: 23.8456, lng: 90.3598, status: 'returning', zone: 'Zone 4' },
+      ];
+      
+      setLiveVehicles(mockVehicles);
+    };
+
+    initializeMockVehicles();
 
     // Simulate vehicle movement every 5 seconds
     const interval = setInterval(() => {
@@ -191,12 +194,12 @@ export default function LiveWasteMap() {
   const getCenterIcon = (category) => {
     const color = getCategoryColor(category);
     const colorMap = {
-      emerald: '#10b981',
-      blue: '#3b82f6',
-      purple: '#a855f7',
-      green: '#22c55e',
-      amber: '#f59e0b',
-      gray: '#6b7280'
+      emerald: '#2E6F40',
+      blue: '#2E6F40',
+      purple: '#2E6F40',
+      green: '#2E6F40',
+      amber: '#2E6F40',
+      gray: '#2E6F40'
     };
 
     return L.divIcon({
@@ -217,23 +220,19 @@ export default function LiveWasteMap() {
     <div className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="glass-ultra rounded-3xl p-8 border-2 border-emerald-300/30"
-        >
+        <div className="glass-ultra rounded-3xl p-8 border-2 border-[#2E6F40]/30">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <h1 className="text-4xl font-bold text-emerald-50 mb-2 flex items-center gap-3">
-                <MapPinned className="w-10 h-10 text-emerald-400" />
+              <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
+                <MapPinned className="w-10 h-10 text-[#2E6F40]" />
                 Live Waste Map
               </h1>
-              <p className="text-emerald-200">Track waste collection vehicles and find recycling centers in real-time</p>
+              <p className="text-gray-200">Track waste collection vehicles and find recycling centers in real-time</p>
             </div>
             <button
               onClick={getUserLocation}
               disabled={loadingLocation}
-              className="flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-all shadow-lg disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-3 bg-[#2E6F40] text-white rounded-xl hover:bg-[#245a33] transition-all shadow-lg disabled:opacity-50"
             >
               {loadingLocation ? (
                 <Loader className="w-5 h-5 animate-spin" />
@@ -243,10 +242,10 @@ export default function LiveWasteMap() {
               {loadingLocation ? 'Locating...' : 'My Location'}
             </button>
           </div>
-        </motion.div>
+        </div>
 
         {/* Category Filters */}
-        <div className="glass-soft rounded-2xl p-4 border border-emerald-300/20">
+        <div className="glass-soft rounded-2xl p-4 border border-[#2E6F40]/20">
           <div className="flex flex-wrap gap-3">
             {categories.map((cat) => (
               <button
@@ -254,8 +253,8 @@ export default function LiveWasteMap() {
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-6 py-3 rounded-xl font-semibold transition-all ${
                   selectedCategory === cat.id
-                    ? `bg-${cat.color}-600 text-white shadow-lg`
-                    : 'bg-emerald-900/30 text-emerald-200 hover:bg-emerald-800/40'
+                    ? 'bg-[#2E6F40] text-white shadow-lg'
+                    : 'bg-[#2E6F40]/20 text-white hover:bg-[#2E6F40]/30'
                 }`}
               >
                 {cat.label}
@@ -268,7 +267,7 @@ export default function LiveWasteMap() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Map Container */}
           <div className="lg:col-span-2">
-            <div className="glass-ultra rounded-2xl overflow-hidden border-2 border-emerald-300/30" style={{ height: '600px' }}>
+            <div className="glass-ultra rounded-2xl overflow-hidden border-2 border-[#2E6F40]/30" style={{ height: '600px' }}>
               {GOOGLE_MAPS_API_KEY && GOOGLE_MAPS_API_KEY !== 'your_google_maps_api_key_here' ? (
                 <MapContainer
                   center={userLocation || [23.8103, 90.4125]}
@@ -308,7 +307,7 @@ export default function LiveWasteMap() {
                               <p className="font-semibold">Accepts:</p>
                               <div className="flex flex-wrap gap-1 mt-1">
                                 {center.accepts.map((item, idx) => (
-                                  <span key={idx} className="text-xs px-2 py-1 bg-emerald-100 text-emerald-700 rounded">
+                                  <span key={idx} className="text-xs px-2 py-1 bg-[#2E6F40]/20 text-white rounded">
                                     {item}
                                   </span>
                                 ))}
@@ -356,11 +355,11 @@ export default function LiveWasteMap() {
                   )}
                 </MapContainer>
               ) : (
-                <div className="flex items-center justify-center h-full bg-emerald-900/20">
+                <div className="flex items-center justify-center h-full bg-[#2E6F40]/10">
                   <div className="text-center p-8">
-                    <AlertCircle className="w-16 h-16 text-emerald-400 mx-auto mb-4" />
-                    <h3 className="text-xl font-bold text-emerald-100 mb-2">Map API Not Configured</h3>
-                    <p className="text-emerald-300 text-sm">
+                    <AlertCircle className="w-16 h-16 text-[#2E6F40] mx-auto mb-4" />
+                    <h3 className="text-xl font-bold text-white mb-2">Map API Not Configured</h3>
+                    <p className="text-gray-300 text-sm">
                       Add your Google Maps API key to .env file to enable live map
                     </p>
                   </div>
@@ -371,24 +370,22 @@ export default function LiveWasteMap() {
 
           {/* Live Vehicles Sidebar */}
           <div className="space-y-4">
-            <div className="glass-ultra rounded-2xl p-6 border border-emerald-300/20">
-              <h3 className="text-xl font-bold text-emerald-50 mb-4 flex items-center gap-2">
+            <div className="glass-ultra rounded-2xl p-6 border border-[#2E6F40]/20">
+              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                 <Truck className="w-5 h-5" />
                 Live Vehicles
               </h3>
               <div className="space-y-3">
                 {liveVehicles.map((vehicle) => (
-                  <motion.div
+                  <div
                     key={vehicle.id}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="p-4 bg-emerald-900/30 rounded-xl border border-emerald-700/30"
+                    className="p-4 bg-[#2E6F40]/20 rounded-xl border border-[#2E6F40]/30 animate-in fade-in slide-in-from-right duration-300"
                   >
                     <div className="flex items-center gap-3 mb-2">
-                      <Truck className="w-5 h-5 text-emerald-400" />
+                      <Truck className="w-5 h-5 text-[#2E6F40]" />
                       <div className="flex-1">
-                        <div className="font-semibold text-emerald-100">{vehicle.name}</div>
-                        <div className="text-xs text-emerald-300">{vehicle.zone}</div>
+                        <div className="font-semibold text-white">{vehicle.name}</div>
+                        <div className="text-xs text-gray-300">{vehicle.zone}</div>
                       </div>
                     </div>
                     <div className={`text-xs px-2 py-1 rounded inline-block ${
@@ -398,15 +395,15 @@ export default function LiveWasteMap() {
                     }`}>
                       {vehicle.status}
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </div>
 
             {/* API Info */}
-            <div className="glass-ultra rounded-2xl p-6 border border-emerald-300/20">
-              <h3 className="text-lg font-bold text-emerald-50 mb-3">🔑 API Integrations</h3>
-              <div className="space-y-2 text-sm text-emerald-200">
+            <div className="glass-ultra rounded-2xl p-6 border border-[#2E6F40]/20">
+              <h3 className="text-lg font-bold text-white mb-3">🔑 API Integrations</h3>
+              <div className="space-y-2 text-sm text-gray-200">
                 <div className="flex items-center gap-2">
                   <div className={`w-2 h-2 rounded-full ${GOOGLE_MAPS_API_KEY !== 'your_google_maps_api_key_here' ? 'bg-green-400' : 'bg-red-400'}`}></div>
                   <span>Google Maps API</span>
@@ -425,20 +422,18 @@ export default function LiveWasteMap() {
         </div>
 
         {/* Centers List */}
-        <div className="glass-ultra rounded-2xl p-6 border border-emerald-300/20">
-          <h3 className="text-xl font-bold text-emerald-50 mb-4">
+        <div className="glass-ultra rounded-2xl p-6 border border-[#2E6F40]/20">
+          <h3 className="text-xl font-bold text-white mb-4">
             Recycling Centers ({filteredCenters.length})
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredCenters.map((center) => (
-              <motion.div
+              <div
                 key={center.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="p-5 bg-emerald-900/30 rounded-xl border border-emerald-700/30 hover:bg-emerald-800/40 transition-all"
+                className="p-5 bg-[#2E6F40]/20 rounded-xl border border-[#2E6F40]/30 hover:bg-[#2E6F40]/30 transition-all animate-in fade-in zoom-in-95 duration-300"
               >
-                <h4 className="font-bold text-emerald-100 mb-2">{center.name}</h4>
-                <div className="space-y-2 text-sm text-emerald-300">
+                <h4 className="font-bold text-white mb-2">{center.name}</h4>
+                <div className="space-y-2 text-sm text-gray-200">
                   <p className="flex items-center gap-2">
                     <MapPin className="w-4 h-4" />
                     {center.address}
@@ -449,13 +444,13 @@ export default function LiveWasteMap() {
                   </p>
                   <div className="flex flex-wrap gap-1 mt-2">
                     {center.accepts.map((item, idx) => (
-                      <span key={idx} className="text-xs px-2 py-1 bg-emerald-600/30 text-emerald-200 rounded">
+                      <span key={idx} className="text-xs px-2 py-1 bg-[#2E6F40]/40 text-white rounded">
                         {item}
                       </span>
                     ))}
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

@@ -3,7 +3,7 @@
 
 /* Global Background - Forest Green */
 body {
-  background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #065f46 100%);
+  background: linear-gradient(135deg, #1a4d2e 0%, #2E6F40 50%, #1a4d2e 100%);
   background-attachment: fixed;
   min-height: 100vh;
 }

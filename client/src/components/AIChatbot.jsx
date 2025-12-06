@@ -108,7 +108,7 @@ export default function AIChatbot() {
       {/* Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 left-6 p-4 bg-gradient-to-r from-emerald-500 to-lime-500 text-white rounded-full shadow-2xl hover:shadow-emerald-500/50 transition-all hover:scale-110 z-40 animate-pulse"
+        className="fixed bottom-6 left-6 p-4 bg-[#2E6F40] text-white rounded-full shadow-2xl hover:shadow-[#2E6F40]/50 transition-all hover:scale-110 z-40 animate-pulse"
       >
         <Bot className="w-6 h-6" />
         <Sparkles className="w-3 h-3 absolute -top-1 -right-1 text-yellow-300" />
@@ -121,10 +121,10 @@ export default function AIChatbot() {
             initial={{ opacity: 0, x: -100, scale: 0.8 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: -100, scale: 0.8 }}
-            className="fixed bottom-24 left-6 w-96 h-[600px] glass-ultra rounded-2xl shadow-2xl flex flex-col z-50 border-2 border-emerald-300/30 overflow-hidden"
+            className="fixed bottom-24 left-6 w-96 h-[600px] glass-ultra rounded-2xl shadow-2xl flex flex-col z-50 border-2 border-[#2E6F40]/30 overflow-hidden"
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-emerald-600 to-lime-600 text-white p-4 flex items-center justify-between">
+            <div className="bg-[#2E6F40] text-white p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <Bot className="w-8 h-8" />
@@ -132,7 +132,7 @@ export default function AIChatbot() {
                 </div>
                 <div>
                   <h3 className="font-bold text-lg">EcoBot AI</h3>
-                  <p className="text-xs text-emerald-100">Powered by Gemini</p>
+                  <p className="text-xs text-white/80">Powered by Gemini</p>
                 </div>
               </div>
               <button
@@ -144,46 +144,40 @@ export default function AIChatbot() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-emerald-50/50 to-lime-50/30">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#2E6F40]/5">
               {messages.map((msg) => (
-                <motion.div
+                <div
                   key={msg.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
                 >
                   <div
                     className={`max-w-[80%] rounded-2xl p-3 ${
                       msg.sender === 'user'
-                        ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white'
-                        : 'bg-white/80 text-gray-800 border border-emerald-200'
+                        ? 'bg-[#2E6F40] text-white'
+                        : 'bg-white/80 text-gray-800 border border-[#2E6F40]/20'
                     }`}
                   >
                     {msg.sender === 'bot' && (
                       <div className="flex items-center gap-2 mb-1">
-                        <Bot className="w-4 h-4 text-emerald-600" />
-                        <span className="text-xs font-semibold text-emerald-600">EcoBot</span>
+                        <Bot className="w-4 h-4 text-[#2E6F40]" />
+                        <span className="text-xs font-semibold text-[#2E6F40]">EcoBot</span>
                       </div>
                     )}
                     <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
-                    <p className={`text-xs mt-1 ${msg.sender === 'user' ? 'text-emerald-100' : 'text-gray-500'}`}>
+                    <p className={`text-xs mt-1 ${msg.sender === 'user' ? 'text-white/80' : 'text-gray-500'}`}>
                       {msg.time}
                     </p>
                   </div>
-                </motion.div>
+                </div>
               ))}
               
               {isLoading && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex justify-start"
-                >
-                  <div className="bg-white/80 border border-emerald-200 rounded-2xl p-3 flex items-center gap-2">
-                    <Loader className="w-4 h-4 text-emerald-600 animate-spin" />
+                <div className="flex justify-start animate-in fade-in duration-200">
+                  <div className="bg-white/80 border border-[#2E6F40]/20 rounded-2xl p-3 flex items-center gap-2">
+                    <Loader className="w-4 h-4 text-[#2E6F40] animate-spin" />
                     <span className="text-sm text-gray-600">EcoBot is thinking...</span>
                   </div>
-                </motion.div>
+                </div>
               )}
               
               <div ref={messagesEndRef} />
@@ -191,14 +185,14 @@ export default function AIChatbot() {
 
             {/* Quick Actions */}
             {messages.length <= 1 && (
-              <div className="p-3 bg-emerald-50/50 border-t border-emerald-200/30">
+              <div className="p-3 bg-[#2E6F40]/5 border-t border-[#2E6F40]/20">
                 <p className="text-xs text-gray-600 mb-2 font-medium">Quick questions:</p>
                 <div className="flex flex-wrap gap-2">
                   {quickActions.map((action, idx) => (
                     <button
                       key={idx}
                       onClick={() => handleQuickAction(action)}
-                      className="text-xs px-3 py-1.5 bg-white border border-emerald-300 text-emerald-700 rounded-full hover:bg-emerald-50 transition-colors"
+                      className="text-xs px-3 py-1.5 bg-white border border-[#2E6F40] text-[#2E6F40] rounded-full hover:bg-[#2E6F40]/10 transition-colors"
                     >
                       {action}
                     </button>
@@ -221,7 +215,7 @@ export default function AIChatbot() {
                 <button
                   type="submit"
                   disabled={!input.trim() || isLoading}
-                  className="p-2 bg-gradient-to-r from-emerald-600 to-lime-600 text-white rounded-full hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="p-2 bg-[#2E6F40] text-white rounded-full hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send className="w-5 h-5" />
                 </button>

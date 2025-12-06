@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import useAuthStore from '../store/authStore';
 import { useTheme } from '../hooks/useTheme';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Register() {
   const [role, setRole] = useState('citizen'); // 'citizen', 'waste-manager', or 'admin'
@@ -38,8 +40,13 @@ export default function Register() {
   };
 
   const validateNID = (nid) => {
-    // Bangladesh NID: 10 or 13 or 17 digits
-    return /^\d{10}$|^\d{13}$|^\d{17}$/.test(nid);
+    // NID must be exactly 10 digits
+    return /^\d{10}$/.test(nid);
+  };
+
+  const validateEmail = (email) => {
+    // Email must contain @ and .com
+    return /^[^\s@]+@[^\s@]+\.com$/.test(email);
   };
 
   const handleSubmit = async (e) => {
@@ -48,32 +55,38 @@ export default function Register() {
     setError('');
 
     // Validation
+    if (!validateEmail(formData.email)) {
+      toast.error('Invalid email. Must contain @ and end with .com');
+      setLoading(false);
+      return;
+    }
+
     if (!validateNID(formData.nid)) {
-      setError('Invalid NID number. Must be 10, 13, or 17 digits');
+      toast.error('Invalid NID number. Must be exactly 10 digits');
       setLoading(false);
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      toast.error('Passwords do not match');
       setLoading(false);
       return;
     }
 
-    if (formData.password.length < 8) {
-      setError('Password must be at least 8 characters');
+    if (formData.password.length < 6) {
+      toast.error('Password must be at least 6 characters');
       setLoading(false);
       return;
     }
 
     if (role === 'admin' && !formData.organization) {
-      setError('Organization name is required for administrators');
+      toast.error('Organization name is required for administrators');
       setLoading(false);
       return;
     }
 
     if (role === 'waste-manager' && !formData.organization) {
-      setError('Organization name is required for waste managers');
+      toast.error('Organization name is required for waste managers');
       setLoading(false);
       return;
     }
@@ -449,6 +462,7 @@ export default function Register() {
           <a href="#" className={`${currentStyle.text} hover:${currentStyle.accent}`}>Privacy Policy</a>
         </div>
       </motion.div>
+      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
     </div>
   );
 }

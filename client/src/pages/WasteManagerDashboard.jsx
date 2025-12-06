@@ -58,7 +58,7 @@ export default function WasteManagerDashboard() {
   const getPriorityColor = (priority) => {
     switch(priority) {
       case 'high': return 'text-red-600 bg-red-50';
-      case 'medium': return 'text-amber-600 bg-amber-50';
+      case 'medium': return 'text-cyan-600 bg-cyan-50';
       case 'low': return 'text-green-600 bg-green-50';
       default: return 'text-gray-600 bg-gray-50';
     }

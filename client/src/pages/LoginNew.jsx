@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import useAuthStore from '../store/authStore';
 import { useTheme } from '../hooks/useTheme';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Login() {
   const [role, setRole] = useState('citizen'); // 'citizen', 'waste-manager', or 'admin'
@@ -32,10 +34,39 @@ export default function Login() {
     switchTheme(newRole);
   };
 
+  const validateEmail = (email) => {
+    // Email must contain @ and .com
+    return /^[^\s@]+@[^\s@]+\.com$/.test(email);
+  };
+
+  const validateNID = (nid) => {
+    // NID must be exactly 10 digits
+    return /^\d{10}$/.test(nid);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    // Validation
+    if (!validateEmail(formData.email)) {
+      toast.error('Invalid email. Must contain @ and end with .com');
+      setLoading(false);
+      return;
+    }
+
+    if (!validateNID(formData.nid)) {
+      toast.error('Invalid NID. Must be exactly 10 digits');
+      setLoading(false);
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      setLoading(false);
+      return;
+    }
 
     // Mock login - in real app, would validate with backend
     setTimeout(() => {
@@ -310,6 +341,7 @@ export default function Login() {
           )}
         </div>
       </motion.div>
+      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
     </div>
   );
 }
