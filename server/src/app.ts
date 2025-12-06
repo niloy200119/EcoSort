@@ -4,6 +4,8 @@ import cors from "cors";
 
 import { config } from "./config/env";
 import { errorHandler, notFound } from "./middlewares/errorHandler";
+import authRoutes from "./routes/authRoutes";
+import adminRoutes from "./routes/adminRoutes";
 
 const app: Application = express();
 
@@ -33,6 +35,9 @@ app.get("/health", (_req: Request, res: Response) => {
   });
 });
 
+app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
+
 app.get("/", (_req: Request, res: Response) => {
   res.json({
     success: true,
@@ -49,7 +54,6 @@ app.get("/", (_req: Request, res: Response) => {
 });
 
 app.use(notFound);
-
 app.use(errorHandler);
 
 export default app;
