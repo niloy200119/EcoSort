@@ -44,7 +44,11 @@ class AuthService {
     name: string,
     email: string,
     password: string,
-    role: UserRole = UserRole.USER,
+    nid: string,
+    location: string,
+    role: UserRole = UserRole.CITIZEN,
+    organization?: string,
+    designation?: string,
   ): Promise<{ user: IUser; tokens: AuthTokens }> {
     const existingUser = await User.findOne({ email });
 
@@ -52,11 +56,21 @@ class AuthService {
       throw new ApiError(409, "Email already registered");
     }
 
+    const existingNid = await User.findOne({ nid });
+    
+    if (existingNid) {
+        throw new ApiError(409, "NID already registered");
+    }
+
     const user = await User.create({
       name,
       email,
       password,
       role,
+      nid,
+      location,
+      organization,
+      designation,
     });
 
     const tokens = this.generateTokens(user);

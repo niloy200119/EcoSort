@@ -15,4 +15,6 @@ router.get("/users", adminController.getAllUsers);
 
 router.delete("/users/:id", adminController.deleteUser);
 
+router.post("/seed", adminController.seedData);
+
 export default router;

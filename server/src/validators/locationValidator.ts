@@ -11,6 +11,7 @@ export const createLocationSchema = z.object({
     type: z.enum([
       LocationType.RECYCLING_CENTER,
       LocationType.COMPOST_SITE,
+      LocationType.COMPOST_FACILITY,
       LocationType.EWASTE_DROPOFF,
       LocationType.HAZARDOUS_WASTE,
       LocationType.COLLECTION_POINT,

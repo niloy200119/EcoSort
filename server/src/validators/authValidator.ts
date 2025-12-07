@@ -15,6 +15,11 @@ export const registerSchema = z.object({
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
         "Password must contain at least one uppercase letter, one lowercase letter, and one number",
       ),
+    nid: z.string().min(10, "NID must be at least 10 characters").trim(),
+    location: z.string().min(1, "Location is required").trim(),
+    role: z.enum(["citizen", "waste-manager", "admin"]).optional(),
+    organization: z.string().optional(),
+    designation: z.string().optional(),
   }),
 });
 

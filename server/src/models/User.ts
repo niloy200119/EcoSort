@@ -2,7 +2,8 @@ import mongoose, { Document, Schema } from "mongoose";
 import bcrypt from "bcrypt";
 
 export enum UserRole {
-  USER = "user",
+  CITIZEN = "citizen",
+  WASTE_MANAGER = "waste-manager",
   ADMIN = "admin",
 }
 
@@ -11,6 +12,10 @@ export interface IUser extends Document {
   email: string;
   password: string;
   role: UserRole;
+  nid: string;
+  location: string;
+  organization?: string;
+  designation?: string;
   points: number;
   refreshToken?: string;
   createdAt: Date;
@@ -44,10 +49,29 @@ const userSchema = new Schema<IUser>(
       minlength: [6, "Password must be at least 6 characters long"],
       select: false,
     },
+    nid: {
+      type: String,
+      required: [true, "NID is required"],
+      unique: true,
+      trim: true,
+    },
+    location: {
+      type: String,
+      required: [true, "Location is required"],
+      trim: true,
+    },
+    organization: {
+      type: String,
+      trim: true,
+    },
+    designation: {
+      type: String,
+      trim: true,
+    },
     role: {
       type: String,
       enum: Object.values(UserRole),
-      default: UserRole.USER,
+      default: UserRole.CITIZEN,
     },
     points: {
       type: Number,

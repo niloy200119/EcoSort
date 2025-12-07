@@ -3,6 +3,7 @@ import mongoose, { Document, Schema } from "mongoose";
 export enum LocationType {
   RECYCLING_CENTER = "recycling_center",
   COMPOST_SITE = "compost_site",
+  COMPOST_FACILITY = "compost_facility",
   EWASTE_DROPOFF = "ewaste_dropoff",
   HAZARDOUS_WASTE = "hazardous_waste",
   COLLECTION_POINT = "collection_point",
@@ -84,13 +85,10 @@ const recyclingLocationSchema = new Schema<IRecyclingLocation>(
   },
 );
 
-// Create 2dsphere index for geospatial queries
 recyclingLocationSchema.index({ coordinates: "2dsphere" });
 
-// Create text index for search functionality
 recyclingLocationSchema.index({ name: "text", address: "text" });
 
-// Remove __v from JSON output
 recyclingLocationSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.__v;
