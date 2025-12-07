@@ -37,12 +37,44 @@ const mockNearbyCenters = [
 export default function Dashboard() {
   const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState('overview');
+  const [loading, setLoading] = useState(true);
+  const [dashboardData, setDashboardData] = useState({
+    stats: {
+        totalPoints: user?.points || 0,
+        scansThisMonth: 0,
+        recyclingRate: 0,
+        level: 1,
+        nextLevelPoints: 1000
+    },
+    recentScans: [],
+    centers: []
+  });
 
-  // Calculate stats
-  const totalPoints = user?.points || 1250;
-  const scansThisMonth = 23;
-  const recyclingRate = 84;
-  const nextLevelPoints = 1500;
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+        try {
+            const [statsData, locationsData] = await Promise.all([
+                authService.getDashboardStats(),
+                authService.getLocations().catch(() => ({ data: { locations: [] } }))
+            ]);
+
+            setDashboardData(prev => ({
+                ...prev,
+                stats: statsData?.data?.stats || prev.stats,
+                recentScans: statsData?.data?.recentScans || [],
+                centers: locationsData?.data?.locations || []
+            }));
+        } catch (error) {
+            console.error("Failed to fetch dashboard data:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  const { totalPoints, scansThisMonth, recyclingRate, nextLevelPoints } = dashboardData.stats;
   const progressToNext = ((totalPoints / nextLevelPoints) * 100).toFixed(0);
 
   const getMethodColor = (method) => {
@@ -94,17 +126,17 @@ export default function Dashboard() {
           >
             <div className="flex items-start justify-between mb-3">
               <Trophy className="w-10 h-10 text-lime-glow animate-glow-pulse" />
-              <span className="text-xs bg-lime-100/60 text-lime-700 px-2 py-1 rounded-full">+50 today</span>
+              {/* <span className="text-xs bg-lime-100/60 text-lime-700 px-2 py-1 rounded-full">+50 today</span> */}
             </div>
             <p className="text-4xl font-bold mb-1 font-comfortaa text-moss">{totalPoints}</p>
             <p className="text-sage font-nunito mb-2">Impact Points</p>
             <div className="w-full bg-emerald-100/40 rounded-full h-2 mb-1">
               <div 
-                className="bg-gradient-to-r from-emerald-400 to-lime-400 h-2 rounded-full transition-all duration-1000"
+                className="bg-linear-to-r from-emerald-400 to-lime-400 h-2 rounded-full transition-all duration-1000"
                 style={{ width: `${progressToNext}%` }}
               ></div>
             </div>
-            <p className="text-xs text-sage">{nextLevelPoints - totalPoints} points to next level</p>
+            <p className="text-xs text-sage">{Math.max(0, nextLevelPoints - totalPoints)} points to next level</p>
           </motion.div>
 
           {/* Scans This Month */}
@@ -131,7 +163,7 @@ export default function Dashboard() {
             <p className="text-sage font-nunito">Recycling Rate</p>
           </motion.div>
 
-          {/* Member Since */}
+          {/* Member Since / Level */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -139,8 +171,8 @@ export default function Dashboard() {
             className="glass-ultra rounded-3xl p-6 shadow-lg hover:scale-105 transition-transform"
           >
             <Sparkles className="w-10 h-10 mb-3 text-lime-glow animate-pulse" />
-            <p className="text-2xl font-bold mb-1 font-comfortaa text-moss">Eco Warrior</p>
-            <p className="text-sage font-nunito">Current Level</p>
+            <p className="text-2xl font-bold mb-1 font-comfortaa text-moss">Level {dashboardData.stats.level}</p>
+            <p className="text-sage font-nunito">Eco Warrior</p>
           </motion.div>
         </div>
 
@@ -177,31 +209,35 @@ export default function Dashboard() {
                 </Link>
               </div>
               <div className="space-y-4">
-                {mockRecentScans.map((scan, index) => (
-                  <motion.div
-                    key={scan.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="flex items-center justify-between p-4 bg-white/40 rounded-2xl border border-emerald-soft/20"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-emerald-100/60 flex items-center justify-center">
-                        <Recycle className="w-5 h-5 text-emerald-600" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-moss font-nunito">{scan.item}</p>
-                        <p className="text-sm text-sage">{scan.date}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getMethodColor(scan.method)}`}>
-                        {scan.method}
-                      </span>
-                      <p className="text-sm text-lime-glow font-bold mt-1">+{scan.points} pts</p>
-                    </div>
-                  </motion.div>
-                ))}
+                {dashboardData.recentScans.length > 0 ? (
+                    dashboardData.recentScans.map((scan, index) => (
+                    <motion.div
+                        key={scan.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="flex items-center justify-between p-4 bg-white/40 rounded-2xl border border-emerald-soft/20"
+                    >
+                        <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-emerald-100/60 flex items-center justify-center">
+                            <Recycle className="w-5 h-5 text-emerald-600" />
+                        </div>
+                        <div>
+                            <p className="font-semibold text-moss font-nunito">{scan.item}</p>
+                            <p className="text-sm text-sage">{new Date(scan.date).toLocaleDateString()}</p>
+                        </div>
+                        </div>
+                        <div className="text-right">
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getMethodColor(scan.method || 'Recycle')}`}>
+                            {scan.method || 'Recycle'}
+                        </span>
+                        <p className="text-sm text-lime-glow font-bold mt-1">+{scan.points} pts</p>
+                        </div>
+                    </motion.div>
+                    ))
+                ) : (
+                    <p className="text-center text-sage py-4">No scans yet. Start by scanning an item!</p>
+                )}
               </div>
             </motion.div>
 
@@ -306,28 +342,32 @@ export default function Dashboard() {
           >
             <h2 className="text-2xl font-bold text-moss font-comfortaa mb-6">Nearby Recycling Centers</h2>
             <div className="space-y-4">
-              {mockNearbyCenters.map((center) => (
-                <div
-                  key={center.id}
-                  className="flex items-center justify-between p-5 glass-ultra rounded-2xl hover:scale-102 transition-transform"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-emerald-100/60 flex items-center justify-center">
-                      <MapPin className="w-6 h-6 text-emerald-600" />
+              {dashboardData.centers.length > 0 ? (
+                dashboardData.centers.map((center) => (
+                    <div
+                    key={center._id || center.id}
+                    className="flex items-center justify-between p-5 glass-ultra rounded-2xl hover:scale-102 transition-transform"
+                    >
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-emerald-100/60 flex items-center justify-center">
+                        <MapPin className="w-6 h-6 text-emerald-600" />
+                        </div>
+                        <div>
+                        <p className="font-semibold text-moss font-nunito text-lg">{center.name}</p>
+                        <p className="text-sm text-sage">{center.type?.replace('_', ' ') || 'Center'}</p>
+                        </div>
                     </div>
-                    <div>
-                      <p className="font-semibold text-moss font-nunito text-lg">{center.name}</p>
-                      <p className="text-sm text-sage">{center.type}</p>
+                    <div className="text-right">
+                        <p className="text-sm font-semibold text-emerald-soft">{center.address}</p>
+                        <Link to="/map" className="text-xs text-lime-glow hover:underline">
+                        Get Directions →
+                        </Link>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-semibold text-emerald-soft">{center.distance}</p>
-                    <Link to="/map" className="text-xs text-lime-glow hover:underline">
-                      Get Directions →
-                    </Link>
-                  </div>
-                </div>
-              ))}
+                    </div>
+                ))
+              ) : (
+                  <p className="text-center text-sage">No centers found.</p>
+              )}
             </div>
           </motion.div>
         )}
