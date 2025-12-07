@@ -21,12 +21,12 @@ export const createWasteItemSchema = z.object({
     ]),
     description: z
       .string()
-      .min(10, "Description must be at least 10 characters")
+      .min(5, "Description must be at least 10 characters")
       .max(1000, "Description cannot exceed 1000 characters")
       .trim(),
     properDisposalMethod: z
       .string()
-      .min(10, "Disposal method must be at least 10 characters")
+      .min(5, "Disposal method must be at least 10 characters")
       .max(1000, "Disposal method cannot exceed 1000 characters")
       .trim(),
     isRecyclable: z.boolean(),

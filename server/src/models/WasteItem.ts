@@ -6,7 +6,7 @@ export enum WasteCategory {
   METAL = "metal",
   GLASS = "glass",
   ORGANIC = "organic",
-  EWASTE = "e-waste",
+  EWASTE = "ewaste",
   HAZARDOUS = "hazardous",
   TEXTILE = "textile",
   OTHER = "other",
@@ -48,7 +48,7 @@ const wasteItemSchema = new Schema<IWasteItem>(
       type: String,
       required: [true, "Proper disposal method is required"],
       trim: true,
-      minlength: [10, "Disposal method must be at least 10 characters long"],
+      minlength: [5, "Disposal method must be at least 10 characters long"],
       maxlength: [1000, "Disposal method cannot exceed 1000 characters"],
     },
     isRecyclable: {
@@ -67,10 +67,8 @@ const wasteItemSchema = new Schema<IWasteItem>(
   },
 );
 
-// Create text index for search functionality
 wasteItemSchema.index({ name: "text", description: "text" });
 
-// Remove __v from JSON output
 wasteItemSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.__v;

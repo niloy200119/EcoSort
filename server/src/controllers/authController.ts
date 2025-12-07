@@ -6,9 +6,18 @@ import { AuthRequest } from "../middlewares/auth";
 
 class AuthController {
   register = asyncHandler(async (req: Request, res: Response) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, nid, location, role, organization, designation } = req.body;
 
-    const { user, tokens } = await authService.register(name, email, password);
+    const { user, tokens } = await authService.register(
+        name, 
+        email, 
+        password, 
+        nid, 
+        location, 
+        role, 
+        organization, 
+        designation
+    );
 
     return ApiResponse.created(res, "User registered successfully", {
       user,
