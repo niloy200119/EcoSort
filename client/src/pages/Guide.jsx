@@ -158,7 +158,7 @@ const Guide = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  whileHover={anim.withHover}
+                  whileHover={anim.whileHover}
                   className="glass-ultra rounded-3xl p-6 transition-transform animate-breathe"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >

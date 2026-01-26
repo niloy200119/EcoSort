@@ -44,6 +44,15 @@ export const API_ENDPOINTS = {
   GET_REMINDERS: '/api/reminders',
   CREATE_REMINDER: '/api/reminders/create',
   DELETE_REMINDER: '/api/reminders/delete',
+
+  // Events
+  GET_EVENTS: '/api/events',
+  CREATE_EVENT: '/api/events',
+  JOIN_EVENT: (id) => `/api/events/${id}/join`,
+  GET_EVENT_DETAILS: (id) => `/api/events/${id}`,
+  GET_EVENT_POSTS: (id) => `/api/events/${id}/forum`,
+  CREATE_EVENT_POST: (id) => `/api/events/${id}/forum`,
+  GET_MY_TICKETS: '/api/events/tickets/my',
 };
 
 export const EXTERNAL_APIS = {

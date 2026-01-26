@@ -24,6 +24,7 @@ export default function Navbar() {
   // Different nav links based on role
   const citizenLinks = [
     { path: '/', label: 'Home' },
+    { path: '/events', label: 'Community' },
     { path: '/scanner', label: 'Scanner' },
     { path: '/map', label: 'Map' },
     { path: '/guide', label: 'Guide' },
@@ -33,6 +34,7 @@ export default function Navbar() {
   const adminLinks = [
     { path: '/', label: 'Home' },
     { path: '/admin/dashboard', label: 'Dashboard' },
+    { path: '/events', label: 'Events' },
     { path: '/map', label: 'Centers' },
     { path: '/guide', label: 'Guide' },
   ];
@@ -40,6 +42,7 @@ export default function Navbar() {
   const wasteManagerLinks = [
     { path: '/', label: 'Home' },
     { path: '/waste-manager/dashboard', label: 'Dashboard' },
+    { path: '/events', label: 'Events' },
     { path: '/map', label: 'Map' },
     { path: '/guide', label: 'Guide' },
   ];

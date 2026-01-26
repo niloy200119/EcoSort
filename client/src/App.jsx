@@ -15,15 +15,27 @@ import RegisterNew from './pages/RegisterNew';
 import AdminDashboard from './pages/AdminDashboard';
 import WasteManagerDashboard from './pages/WasteManagerDashboard';
 import NotFound from './pages/NotFound';
+import Events from './pages/Events';
+import EventDetails from './pages/EventDetails';
+import CreateEvent from './pages/CreateEvent';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
     <Router>
       <div className="flex flex-col min-h-screen">
+        <Toaster position="top-center" />
         <NavbarNew />
         <main className="grow">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/events/:id" element={<EventDetails />} />
+            <Route path="/events/create" element={
+              <ProtectedRoute>
+                <CreateEvent />
+              </ProtectedRoute>
+            } />
             <Route path="/scanner" element={<Scanner />} />
             <Route path="/scan-result" element={<ScanResult />} />
             <Route path="/map" element={<Map />} />

@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Award, Camera, TrendingUp, Calendar, MapPin, Trophy, Leaf, Recycle, Sparkles, Target } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
+import authService from '../services/authService';
 
 // Mock data generated outside component for React purity
 const mockRecentScans = [
