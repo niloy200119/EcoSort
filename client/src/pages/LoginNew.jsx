@@ -8,7 +8,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function Login() {
-  const [role, setRole] = useState('citizen'); // 'citizen', 'waste-manager', or 'admin'
+  const [role, setRole] = useState('citizen');
   const [formData, setFormData] = useState({
     email: '',
     nid: '',
@@ -35,12 +35,10 @@ export default function Login() {
   };
 
   const validateEmail = (email) => {
-    // Email must contain @ and .com
     return /^[^\s@]+@[^\s@]+\.com$/.test(email);
   };
 
   const validateNID = (nid) => {
-    // NID must be exactly 10 digits
     return /^\d{10}$/.test(nid);
   };
 
@@ -49,13 +47,12 @@ export default function Login() {
     setLoading(true);
     setError('');
 
-    // Validation
     if (!validateEmail(formData.email)) {
       toast.error('Invalid email. Must contain @ and end with .com');
       setLoading(false);
       return;
     }
-
+    
     if (!validateNID(formData.nid)) {
       toast.error('Invalid NID. Must be exactly 10 digits');
       setLoading(false);
@@ -68,44 +65,36 @@ export default function Login() {
       return;
     }
 
-    // Mock login - in real app, would validate with backend
-    setTimeout(() => {
-      if (formData.email && formData.password && formData.nid) {
-        // Mock user data
-        const userData = {
-          name: role === 'citizen' ? 'John Citizen' : role === 'waste-manager' ? 'Manager Rahman' : 'Admin Officer',
-          email: formData.email,
-          nid: formData.nid,
-          role: role,
-          location: role === 'citizen' ? 'Dhaka' : role === 'waste-manager' ? 'Dhaka Zone 3' : 'Dhaka North City Corporation',
-          ...(role === 'admin' && {
-            organization: 'Department of Environment',
-            designation: 'Environmental Officer'
-          }),
-          ...(role === 'waste-manager' && {
-            organization: 'City Waste Management',
-            designation: 'Collection Manager'
-          }),
-          points: role === 'citizen' ? 1250 : null,
-        };
-
-        login(userData);
-        switchTheme(role);
-
-        if (role === 'citizen') {
-          navigate('/dashboard');
-        } else if (role === 'waste-manager') {
-          navigate('/waste-manager/dashboard');
-        } else {
-          navigate('/admin/dashboard');
+    try {
+        await login(formData.email, formData.password);
+        
+        const currentUser = useAuthStore.getState().user;
+        if (currentUser.role === 'user' && (role === 'waste-manager' || role === 'citizen')) {
+            useAuthStore.getState().updateUser({ role: role });
         }
         
+        switchTheme(role);
+        toast.success(`Welcome back!`);
+
+        const actualRole = currentUser.role || role;
+        
+        if (actualRole === 'citizen' || actualRole === 'user') {
+          navigate('/dashboard');
+        } else if (actualRole === 'waste-manager' || actualRole === 'waste_manager') {
+          navigate('/waste-manager/dashboard');
+        } else if (actualRole === 'admin') {
+          navigate('/admin/dashboard');
+        } else {
+            navigate('/dashboard');
+        }
+
+    } catch (err) {
+        console.error(err);
+        setError(err.message || 'Login failed. Please check your credentials.');
+        toast.error(err.message || 'Login failed');
+    } finally {
         setLoading(false);
-      } else {
-        setError('Please fill in all fields');
-        setLoading(false);
-      }
-    }, 1000);
+    }
   };
 
   const roleStyles = {

@@ -1,47 +1,56 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Truck, MapPin, Calendar, CheckCircle, Clock, 
   AlertTriangle, Users, Package, TrendingUp, BarChart3, Shield
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import useAuthStore from '../store/authStore';
+import authService from '../services/authService';
 import Chat from '../components/Chat';
-
-// Mock data for waste manager
-const collectionSchedule = [
-  { id: 1, zone: 'Zone 1 - Gulshan', time: '06:00 AM', status: 'completed', type: 'General Waste' },
-  { id: 2, zone: 'Zone 2 - Banani', time: '07:00 AM', status: 'in-progress', type: 'Recyclables' },
-  { id: 3, zone: 'Zone 3 - Dhanmondi', time: '08:00 AM', status: 'pending', type: 'General Waste' },
-  { id: 4, zone: 'Zone 4 - Mirpur', time: '09:00 AM', status: 'pending', type: 'E-Waste' },
-  { id: 5, zone: 'Zone 5 - Uttara', time: '10:00 AM', status: 'pending', type: 'Organic Waste' },
-];
-
-const vehicles = [
-  { id: 1, number: 'DHK-1234', status: 'active', driver: 'Karim Ahmed', location: 'Zone 2' },
-  { id: 2, number: 'DHK-5678', status: 'active', driver: 'Rahim Khan', location: 'Zone 1' },
-  { id: 3, number: 'DHK-9012', status: 'maintenance', driver: 'Salim Rahman', location: 'Depot' },
-  { id: 4, number: 'DHK-3456', status: 'idle', driver: 'Habib Ali', location: 'Depot' },
-];
-
-const citizenRequests = [
-  { id: 1, name: 'Ahmed Hassan', request: 'E-waste pickup', address: 'House 23, Road 5, Gulshan', priority: 'high', time: '2 hrs ago' },
-  { id: 2, name: 'Fatima Khan', request: 'Bulk recyclables', address: 'Apt 4B, Banani', priority: 'medium', time: '5 hrs ago' },
-  { id: 3, name: 'Rahman Ali', request: 'Missed collection', address: 'House 15, Dhanmondi', priority: 'high', time: '1 hr ago' },
-];
 
 export default function WasteManagerDashboard() {
   const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState('overview');
-  const [chatMode, setChatMode] = useState('citizens'); // 'citizens' or 'admin'
+  const [chatMode, setChatMode] = useState('citizens');
+  const [loading, setLoading] = useState(true);
 
-  const stats = {
-    todayCollections: 12,
-    completedRoutes: 8,
-    activeVehicles: 2,
-    pendingRequests: 3,
-    totalWasteToday: '4.2 tons',
-    recyclingRate: '68%'
-  };
+  const [stats, setStats] = useState({
+    todayCollections: 0,
+    completedRoutes: 0,
+    activeVehicles: 0,
+    pendingRequests: 0,
+    totalWasteToday: '0 tons',
+    recyclingRate: '0%'
+  });
+
+  const [collectionSchedule, setSchedule] = useState([]);
+  const [vehicles, setVehicles] = useState([]);
+  const [citizenRequests, setRequests] = useState([]);
+
+  useEffect(() => {
+    const fetchManagerData = async () => {
+        try {
+            const [statsData, scheduleData, vehiclesData, requestsData] = await Promise.all([
+                authService.getManagerStats(),
+                authService.getSchedule(),
+                authService.getVehicles(),
+                authService.getRequests()
+            ]);
+
+            if (statsData?.data?.stats) setStats(statsData.data.stats);
+            if (scheduleData?.data?.schedule) setSchedule(scheduleData.data.schedule);
+            if (vehiclesData?.data?.vehicles) setVehicles(vehiclesData.data.vehicles);
+            if (requestsData?.data?.requests) setRequests(requestsData.data.requests);
+
+        } catch (error) {
+            console.error("Failed to fetch manager data", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    fetchManagerData();
+  }, []);
 
   const getStatusColor = (status) => {
     switch(status) {

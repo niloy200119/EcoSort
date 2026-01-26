@@ -1,122 +1,48 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Recycle, Trash2, Leaf } from 'lucide-react';
 import { motion } from 'framer-motion';
+import authService from '../services/authService';
 
 const Guide = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [wasteItems, setWasteItems] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock waste items database
-  const wasteItems = [
-    {
-      id: 1,
-      name: 'Plastic Bottles (PET)',
-      category: 'plastic',
-      disposal: 'Recycle',
-      icon: '🍾',
-      instructions: 'Rinse the bottle and remove the cap. Place in recycling bin.',
-      canRecycle: true
-    },
-    {
-      id: 2,
-      name: 'Food Scraps',
-      category: 'organic',
-      disposal: 'Compost',
-      icon: '🥬',
-      instructions: 'Add to compost bin or green waste collection.',
-      canRecycle: false
-    },
-    {
-      id: 3,
-      name: 'Cardboard Boxes',
-      category: 'paper',
-      disposal: 'Recycle',
-      icon: '📦',
-      instructions: 'Flatten boxes and place in paper recycling bin.',
-      canRecycle: true
-    },
-    {
-      id: 4,
-      name: 'Batteries',
-      category: 'ewaste',
-      disposal: 'Special Collection',
-      icon: '🔋',
-      instructions: 'Take to designated e-waste collection point. Never throw in regular trash.',
-      canRecycle: true
-    },
-    {
-      id: 5,
-      name: 'Glass Jars',
-      category: 'glass',
-      disposal: 'Recycle',
-      icon: '🏺',
-      instructions: 'Rinse and remove lids. Place in glass recycling bin.',
-      canRecycle: true
-    },
-    {
-      id: 6,
-      name: 'Pizza Boxes',
-      category: 'paper',
-      disposal: 'Compost/Trash',
-      icon: '🍕',
-      instructions: 'Clean parts can be recycled. Greasy parts should be composted or trashed.',
-      canRecycle: false
-    },
-    {
-      id: 7,
-      name: 'Aluminum Cans',
-      category: 'metal',
-      disposal: 'Recycle',
-      icon: '🥫',
-      instructions: 'Rinse and crush. Place in metal recycling bin.',
-      canRecycle: true
-    },
-    {
-      id: 8,
-      name: 'Old Electronics',
-      category: 'ewaste',
-      disposal: 'E-Waste Center',
-      icon: '📱',
-      instructions: 'Take to e-waste collection point. Contains valuable materials.',
-      canRecycle: true
-    },
-    {
-      id: 9,
-      name: 'Plastic Bags',
-      category: 'plastic',
-      disposal: 'Special Recycling',
-      icon: '🛍️',
-      instructions: 'Return to grocery stores with bag recycling programs.',
-      canRecycle: true
-    },
-    {
-      id: 10,
-      name: 'Newspapers',
-      category: 'paper',
-      disposal: 'Recycle',
-      icon: '📰',
-      instructions: 'Keep dry and place in paper recycling bin.',
-      canRecycle: true
-    },
-    {
-      id: 11,
-      name: 'Styrofoam',
-      category: 'plastic',
-      disposal: 'Trash',
-      icon: '📦',
-      instructions: 'Most facilities cannot recycle styrofoam. Dispose in regular trash.',
-      canRecycle: false
-    },
-    {
-      id: 12,
-      name: 'Garden Waste',
-      category: 'organic',
-      disposal: 'Compost',
-      icon: '🌿',
-      instructions: 'Add to compost bin or green waste collection.',
-      canRecycle: false
-    }
-  ];
+  useEffect(() => {
+    const fetchItems = async () => {
+        try {
+            const response = await authService.getWasteItems();
+            const itemsData = response.data?.items || response.items || [];
+            
+            if (itemsData.length > 0) {
+                const itemsWithIcons = itemsData.map(item => ({
+                    ...item,
+                    icon: getCategoryIcon(item.category)
+                }));
+                setWasteItems(itemsWithIcons);
+            }
+        } catch (error) {
+            console.error("Failed to fetch waste items", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    fetchItems();
+  }, []);
+
+  const getCategoryIcon = (category) => {
+      switch(category?.toLowerCase()) {
+          case 'plastic': return '🍾';
+          case 'organic': return '🥬';
+          case 'paper': return '📦';
+          case 'glass': return '🏺';
+          case 'metal': return '⚙️';
+          case 'ewaste': return '🔋';
+          case 'hazardous': return '⚠️';
+          default: return '🗑️';
+      }
+  };
 
   const categories = [
     { value: 'all', label: 'All Items', icon: '📋' },
@@ -232,7 +158,7 @@ const Guide = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  whileHover={anim.withHover}
+                  whileHover={anim.whileHover}
                   className="glass-ultra rounded-3xl p-6 transition-transform animate-breathe"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >

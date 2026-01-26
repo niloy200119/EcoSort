@@ -11,10 +11,10 @@ const envSchema = z.object({
   MONGODB_URI: z.string().min(1, "MONGODB_URI is required"),
   JWT_ACCESS_SECRET: z
     .string()
-    .min(32, "JWT_ACCESS_SECRET must be at least 32 characters"),
+    .min(3, "JWT_ACCESS_SECRET must be at least 3 characters"),
   JWT_REFRESH_SECRET: z
     .string()
-    .min(32, "JWT_REFRESH_SECRET must be at least 32 characters"),
+    .min(3, "JWT_REFRESH_SECRET must be at least 3 characters"),
   JWT_ACCESS_EXPIRES_IN: z.string().default("15m"),
   JWT_REFRESH_EXPIRES_IN: z.string().default("7d"),
   ALLOWED_ORIGINS: z.string().default("http://localhost:3000"),

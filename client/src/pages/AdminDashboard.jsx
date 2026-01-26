@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   BarChart3,
   TrendingUp,
@@ -31,6 +31,7 @@ import {
 } from 'recharts';
 import { format, subDays } from 'date-fns';
 import useAuthStore from '../store/authStore';
+import authService from '../services/authService';
 
 // Generate mock data outside component for React purity
 const wasteCollectionData = Array.from({ length: 7 }, (_, i) => ({
@@ -86,7 +87,8 @@ const alerts = [
   },
 ];
 
-const stats = [
+// ... Mock data preservation ...
+const defaultStats = [
   {
     label: 'Total Waste Collected',
     value: '2,847 tons',
@@ -122,12 +124,69 @@ const stats = [
     icon: CheckCircle2,
     color: 'text-purple-600',
     bg: 'bg-purple-100/60',
-  },
+  }
 ];
 
 export default function AdminDashboard() {
   const { user } = useAuthStore();
   const [timeRange, setTimeRange] = useState('7d');
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+        try {
+            const response = await authService.getAdminStats();
+            if (response && response.stats) {
+                setDashboardData(response.stats);
+            }
+        } catch (error) {
+            console.error("Failed to fetch admin stats", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    fetchStats();
+  }, []);
+
+  const stats = dashboardData ? [
+    {
+      label: 'Total Waste Items',
+      value: dashboardData.wasteItems?.total?.toString() || '0',
+      change: '+12.5%', // Mock change
+      trend: 'up',
+      icon: Trash2,
+      color: 'text-amber-600',
+      bg: 'bg-amber-100/60',
+    },
+    {
+      label: 'Recycling Items',
+      value: dashboardData.wasteItems?.recyclable?.toString() || '0',
+      change: '+5.2%', // Mock change
+      trend: 'up',
+      icon: Recycle,
+      color: 'text-green-600',
+      bg: 'bg-green-100/60',
+    },
+    {
+      label: 'Total Users',
+      value: dashboardData.users?.total?.toString() || '0',
+      change: '+18.3%',
+      trend: 'up',
+      icon: Users,
+      color: 'text-blue-600',
+      bg: 'bg-blue-100/60',
+    },
+    {
+      label: 'Locations',
+      value: dashboardData.locations?.total?.toString() || '0',
+      change: 'Active',
+      trend: 'up',
+      icon: Building2,
+      color: 'text-purple-600',
+      bg: 'bg-purple-100/60',
+    },
+  ] : defaultStats;
 
   return (
     <div className="min-h-screen bg-amber-50/40 py-8 px-4 transition-colors duration-500">

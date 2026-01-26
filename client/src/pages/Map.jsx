@@ -1,57 +1,53 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MapPin, Navigation, Phone, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
+import authService from '../services/authService';
 
 const Map = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [recyclingCenters, setRecyclingCenters] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock recycling centers data
-  const recyclingCenters = [
-    {
-      id: 1,
-      name: 'Sylhet Central Recycling Center',
-      address: 'Zindabazar, Sylhet',
-      category: 'general',
-      phone: '+880 1XXX-111111',
-      hours: '9 AM - 6 PM',
-      accepts: ['Plastic', 'Paper', 'Metal', 'Glass'],
-      lat: 24.8949,
-      lng: 91.8687
-    },
-    {
-      id: 2,
-      name: 'E-Waste Collection Point',
-      address: 'Ambarkhana, Sylhet',
-      category: 'ewaste',
-      phone: '+880 1XXX-222222',
-      hours: '10 AM - 5 PM',
-      accepts: ['Electronics', 'Batteries', 'Cables'],
-      lat: 24.8998,
-      lng: 91.8714
-    },
-    {
-      id: 3,
-      name: 'Community Compost Center',
-      address: 'Upashahar, Sylhet',
-      category: 'compost',
-      phone: '+880 1XXX-333333',
-      hours: '8 AM - 4 PM',
-      accepts: ['Food Waste', 'Garden Waste', 'Organic Materials'],
-      lat: 24.9045,
-      lng: 91.8611
-    },
-    {
-      id: 4,
-      name: 'Plastic Recycling Hub',
-      address: 'Chowhatta, Sylhet',
-      category: 'plastic',
-      phone: '+880 1XXX-444444',
-      hours: '9 AM - 7 PM',
-      accepts: ['PET Bottles', 'HDPE', 'PP', 'Plastic Bags'],
-      lat: 24.8867,
-      lng: 91.8756
-    }
-  ];
+  useEffect(() => {
+    const fetchLocations = async () => {
+        try {
+            const response = await authService.getLocations();
+            const locationsData = response.data?.locations || response.locations || [];
+            
+            const mappedLocations = locationsData.map(loc => ({
+                id: loc._id,
+                name: loc.name,
+                address: loc.address,
+                phone: loc.phone || 'N/A',
+                hours: loc.hours || '9 AM - 5 PM',
+                lat: loc.coordinates?.coordinates[1] || 24.8949,
+                lng: loc.coordinates?.coordinates[0] || 91.8687,
+                category: mapTypeToCategory(loc.type),
+                accepts: getAcceptsList(loc.type)
+            }));
+            setRecyclingCenters(mappedLocations);
+        } catch (error) {
+            console.error("Failed to fetch locations", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    fetchLocations();
+  }, []);
+
+  const mapTypeToCategory = (type) => {
+      if (type?.includes('ewaste')) return 'ewaste';
+      if (type?.includes('compost')) return 'compost';
+      if (type?.includes('plastic')) return 'plastic';
+      return 'general';
+  };
+
+  const getAcceptsList = (type) => {
+      if (type?.includes('ewaste')) return ['Electronics', 'Batteries', 'Cables'];
+      if (type?.includes('compost')) return ['Food Waste', 'Garden Waste', 'Organic Materials'];
+      if (type?.includes('plastic')) return ['PET Bottles', 'HDPE', 'PP', 'Plastic Bags'];
+      return ['Plastic', 'Paper', 'Metal', 'Glass'];
+  };
 
   const categories = [
     { value: 'all', label: 'All Centers' },

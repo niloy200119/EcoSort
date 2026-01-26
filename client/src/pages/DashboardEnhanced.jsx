@@ -1,11 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   Award, Camera, TrendingUp, Calendar, MapPin, Trophy, Leaf, 
-  Recycle, Sparkles, Target, Bell, Plus, X, Trash2, Clock 
+  Recycle, Sparkles, Target, Bell, Plus, X, Trash2, Clock, Users,
+  CheckCircle, RefreshCw
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
+import { API_CONFIG, API_ENDPOINTS } from '../config/api';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
+
+// Simple notification sound
+const alarmSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
 
 // Mock data generated outside component for React purity
 const mockRecentScans = [
@@ -38,8 +45,26 @@ const mockNearbyCenters = [
 ];
 
 export default function DashboardEnhanced() {
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
   const [activeTab, setActiveTab] = useState('overview');
+  const [myEvents, setMyEvents] = useState([]);
+  
+  useEffect(() => {
+    if (token) {
+        fetchMyEvents();
+    }
+  }, [token]);
+
+  const fetchMyEvents = async () => {
+    try {
+        const response = await axios.get(`${API_CONFIG.BASE_URL}${API_ENDPOINTS.GET_MY_TICKETS}`, {
+             headers: { Authorization: `Bearer ${token}` }
+        });
+        setMyEvents(response.data.data);
+    } catch (error) {
+        console.error("Failed to fetch events", error);
+    }
+  };
   
   // Reminder state
   const [reminders, setReminders] = useState(() => {
@@ -51,7 +76,8 @@ export default function DashboardEnhanced() {
     title: '',
     date: '',
     time: '',
-    type: 'recycle'
+    type: 'recycle',
+    repeat: 'none'
   });
 
   // Calculate stats
@@ -60,6 +86,9 @@ export default function DashboardEnhanced() {
   const recyclingRate = 84;
   const nextLevelPoints = 1500;
   const progressToNext = ((totalPoints / nextLevelPoints) * 100).toFixed(0);
+
+  // Track notified reminders to avoid spam
+  const notifiedRef = useRef(new Set());
 
   // Save reminders to localStorage
   useEffect(() => {
@@ -70,23 +99,73 @@ export default function DashboardEnhanced() {
   useEffect(() => {
     const checkReminders = () => {
       const now = new Date();
+      const todayStr = now.toISOString().split('T')[0];
       
       reminders.forEach(reminder => {
+        // Skip if marked as done for today
+        if (reminder.lastCompleted === todayStr) return;
+
+        // Skip if not today and no repeat
+        const reminderStart = new Date(reminder.date);
         const [hours, minutes] = reminder.time.split(':');
-        const reminderDate = new Date(reminder.date);
-        reminderDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+        
+        let shouldTrigger = false;
+        
+        if (now < reminderStart && reminderStart.toDateString() !== now.toDateString()) {
+           shouldTrigger = false;
+        } else if (reminder.repeat === 'daily') {
+           shouldTrigger = true;
+        } else if (reminder.repeat === 'weekly') {
+           shouldTrigger = reminderStart.getDay() === now.getDay();
+        } else {
+           shouldTrigger = reminderStart.toDateString() === now.toDateString();
+        }
+
+        if (!shouldTrigger) return;
+
+        // Create a date object for specific reminder time TODAY
+        const targetTime = new Date();
+        targetTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
         // Calculate time difference
-        const diffMs = reminderDate - now;
+        const diffMs = targetTime - now;
         const diffMins = Math.floor(diffMs / 60000);
+        
+        // Create unique key for this notification instance (id + date + time window)
+        const notificationKey = `${reminder.id}-${todayStr}-${diffMins}`;
 
-        // Trigger notification 5 minutes before
-        if (diffMins === 5 && Notification.permission === 'granted') {
-          new Notification('EcoSort Reminder', {
-            body: `${reminder.title} in 5 minutes`,
-            icon: '/favicon.ico',
-            tag: reminder.id.toString()
+        // Trigger notification 5 minutes before OR exactly at the time
+        if ((diffMins === 5 || diffMins === 0) && !notifiedRef.current.has(notificationKey)) {
+          const message = diffMins === 0 
+            ? `⏰ It's time for: ${reminder.title}!` 
+            : `⏳ ${reminder.title} in 5 minutes`;
+
+          // 1. Play Sound (The "Alarm")
+          alarmSound.play().catch(e => console.log("Audio play failed (user interaction required first)", e));
+          
+          // 2. Show In-App Toast (Visual Alarm)
+          toast(message, {
+            duration: 8000,
+            style: {
+              background: '#ECFDF5',
+              border: '2px solid #34D399',
+              padding: '16px',
+              color: '#065F46',
+              fontWeight: 'bold',
+            },
+            icon: diffMins === 0 ? '⏰' : '🔔',
           });
+
+          // 3. System Notification
+          if (Notification.permission === 'granted') {
+            new Notification('EcoSort Reminder', {
+              body: message,
+              icon: '/favicon.ico',
+              tag: reminder.id.toString()
+            });
+          }
+          
+          notifiedRef.current.add(notificationKey);
         }
       });
     };
@@ -99,9 +178,8 @@ export default function DashboardEnhanced() {
     requestNotificationPermission();
 
     // Check reminders every minute
-    const interval = setInterval(() => {
-      checkReminders();
-    }, 60000);
+    checkReminders(); // Check immediately on mount
+    const interval = setInterval(checkReminders, 60000);
 
     return () => clearInterval(interval);
   }, [reminders]);
@@ -127,11 +205,26 @@ export default function DashboardEnhanced() {
 
     setReminders([...reminders, newReminder]);
     setShowReminderModal(false);
-    setReminderForm({ title: '', date: '', time: '', type: 'recycle' });
+    setReminderForm({ title: '', date: '', time: '', type: 'recycle', repeat: 'none' });
   };
 
   const deleteReminder = (id) => {
     setReminders(reminders.filter(r => r.id !== id));
+  };
+
+  const toggleReminderCompletion = (id) => {
+    setReminders(reminders.map(r => {
+      if (r.id === id) {
+        const today = new Date().toISOString().split('T')[0];
+        // If already completed today, toggle off. Else mark completed today.
+        const isCompletedToday = r.lastCompleted === today;
+        return { 
+          ...r, 
+          lastCompleted: isCompletedToday ? null : today 
+        };
+      }
+      return r;
+    }));
   };
 
   const getMethodColor = (method) => {
@@ -147,6 +240,7 @@ export default function DashboardEnhanced() {
   const tabs = [
     { id: 'overview', label: 'Overview', icon: Target },
     { id: 'scans', label: 'Scan History', icon: Camera },
+    { id: 'events', label: 'My Events', icon: Calendar },
     { id: 'achievements', label: 'Achievements', icon: Trophy },
     { id: 'centers', label: 'Nearby Centers', icon: MapPin }
   ];
@@ -239,11 +333,11 @@ export default function DashboardEnhanced() {
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-purple-100/70 rounded-xl">
-                <Trophy className="w-6 h-6 text-purple-600" />
+                <Calendar className="w-6 h-6 text-purple-600" />
               </div>
             </div>
-            <div className="text-3xl font-bold text-gray-900 mb-1">3</div>
-            <div className="text-sm text-gray-600">Achievements</div>
+            <div className="text-3xl font-bold text-gray-900 mb-1">{myEvents.length}</div>
+            <div className="text-sm text-gray-600">Events Joined</div>
           </motion.div>
         </div>
 
@@ -388,21 +482,18 @@ export default function DashboardEnhanced() {
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h4 className="font-bold text-gray-800 mb-1">{center.name}</h4>
-                          <div className="flex items-center gap-4 text-sm text-gray-600">
-                            <span className="flex items-center gap-1">
-                              <MapPin className="w-4 h-4" />
-                              {center.distance}
-                            </span>
-                            <span className="text-emerald-600 font-medium">{center.type}</span>
+                          <h4 className="font-bold text-gray-800">{center.name}</h4>
+                          <p className="text-sm text-gray-600 mt-1">{center.type}</p>
+                          <div className="flex gap-2 mt-2">
+                             <div className="flex items-center text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                <MapPin className="w-3 h-3 mr-1" />
+                                {center.distance}
+                             </div>
                           </div>
                         </div>
-                        <Link
-                          to="/centers"
-                          className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors text-sm font-semibold"
-                        >
-                          Directions
-                        </Link>
+                        <button className="p-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition-colors">
+                            <MapPin className="w-5 h-5" />
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -411,7 +502,7 @@ export default function DashboardEnhanced() {
             )}
           </div>
 
-          {/* Sidebar */}
+          {/* Right Sidebar */}
           <div className="space-y-6">
             {/* Reminders */}
             <div className="glass-ultra rounded-2xl p-6">
@@ -432,20 +523,38 @@ export default function DashboardEnhanced() {
                 {reminders.length === 0 ? (
                   <p className="text-gray-500 text-center py-6 text-sm">No reminders set</p>
                 ) : (
-                  reminders.map((reminder) => (
-                    <div key={reminder.id} className="p-3 glass-soft rounded-xl group hover:shadow-md transition-shadow">
+                  reminders.map((reminder) => {
+                    const isDoneToday = reminder.lastCompleted === new Date().toISOString().split('T')[0];
+                    return (
+                    <div key={reminder.id} className={`p-3 rounded-xl group hover:shadow-md transition-all ${isDoneToday ? 'bg-emerald-50 opacity-75' : 'glass-soft'}`}>
                       <div className="flex items-start gap-3">
-                        <div className="text-xl">{reminder.icon}</div>
-                        <div className="flex-1 min-w-0">
+                        <button 
+                            onClick={() => toggleReminderCompletion(reminder.id)}
+                            className={`mt-1 flex-shrink-0 transition-colors ${isDoneToday ? 'text-emerald-600' : 'text-gray-300 hover:text-emerald-500'}`}
+                            title={isDoneToday ? "Mark as not done" : "Mark as done for today"}
+                        >
+                            <CheckCircle className={`w-5 h-5 ${isDoneToday ? 'fill-emerald-100' : ''}`} />
+                        </button>
+                        
+                        <div className={`text-xl ${isDoneToday ? 'opacity-50' : ''}`}>{reminder.icon}</div>
+                        <div className={`flex-1 min-w-0 ${isDoneToday ? 'line-through text-gray-400' : ''}`}>
                           <div className="font-semibold text-gray-800 text-sm truncate">{reminder.title}</div>
                           <div className="flex items-center gap-2 text-xs text-gray-600 mt-1">
-                            <Calendar className="w-3 h-3" />
-                            {reminder.date}
-                          </div>
-                          <div className="flex items-center gap-2 text-xs text-gray-600">
                             <Clock className="w-3 h-3" />
                             {reminder.time}
+                            {reminder.repeat && reminder.repeat !== 'none' && (
+                                <span className="flex items-center gap-1 bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded ml-2 font-medium capitalize">
+                                    <RefreshCw className="w-3 h-3" />
+                                    {reminder.repeat}
+                                </span>
+                            )}
                           </div>
+                          {reminder.repeat === 'none' && (
+                            <div className="flex items-center gap-2 text-xs text-gray-400 mt-0.5">
+                                <Calendar className="w-3 h-3" />
+                                {reminder.date}
+                            </div>
+                          )}
                         </div>
                         <button
                           onClick={() => deleteReminder(reminder.id)}
@@ -456,7 +565,7 @@ export default function DashboardEnhanced() {
                         </button>
                       </div>
                     </div>
-                  ))
+                  )})
                 )}
               </div>
             </div>
@@ -484,18 +593,82 @@ export default function DashboardEnhanced() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-lime-100 rounded-lg">
-                    <Award className="w-5 h-5 text-lime-600" />
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-600">Community Rank</div>
-                    <div className="font-bold text-gray-900">#12</div>
-                  </div>
+                    <div className="p-2 bg-purple-100 rounded-lg">
+                        <Users className="w-5 h-5 text-purple-600" />
+                    </div>
+                    <div>
+                        <div className="text-sm text-gray-600">Events Joined</div>
+                        <div className="font-bold text-gray-900">{myEvents.length}</div>
+                    </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+
+        {/* My Events Tab */}
+        {activeTab === 'events' && (
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                 {myEvents.length > 0 ? (
+                    myEvents.map(ticket => {
+                        const event = ticket.event;
+                        const date = new Date(event.date);
+                        return (
+                            <motion.div 
+                                key={ticket._id}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="bg-white rounded-2xl overflow-hidden shadow-lg border border-emerald-100"
+                            >
+                                <div className="h-32 bg-gray-200 relative">
+                                     {event.image ? (
+                                        <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
+                                            <Calendar className="w-12 h-12 text-white/50" />
+                                        </div>
+                                    )}
+                                    <span className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-bold uppercase
+                                        ${ticket.status === 'approved' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}
+                                    `}>
+                                        {ticket.status}
+                                    </span>
+                                </div>
+                                <div className="p-5">
+                                    <h3 className="text-lg font-bold text-gray-800 mb-2">{event.title}</h3>
+                                    <div className="space-y-2 mb-4">
+                                        <div className="flex items-center text-sm text-gray-500">
+                                            <Calendar className="w-4 h-4 mr-2" />
+                                            {date.toDateString()}
+                                        </div>
+                                        <div className="flex items-center text-sm text-gray-500">
+                                            <Clock className="w-4 h-4 mr-2" />
+                                            {date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                        </div>
+                                        <div className="flex items-center text-sm text-gray-500">
+                                            <MapPin className="w-4 h-4 mr-2" />
+                                            {event.location}
+                                        </div>
+                                    </div>
+                                    <Link 
+                                        to={`/events/${event._id}`}
+                                        className="block w-full text-center py-2 bg-emerald-50 text-emerald-600 rounded-lg font-bold text-sm hover:bg-emerald-500 hover:text-white transition-colors"
+                                    >
+                                        View Event
+                                    </Link>
+                                </div>
+                            </motion.div>
+                        );
+                    })
+                 ) : (
+                     <div className="col-span-full text-center py-10 bg-white rounded-2xl shadow-sm">
+                         <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                         <h3 className="text-lg font-bold text-gray-600">No events joined yet</h3>
+                         <Link to="/events" className="text-emerald-500 hover:underline mt-2 inline-block">Browse Community Events</Link>
+                     </div>
+                 )}
+             </div>
+        )}
       </div>
 
       {/* Reminder Modal */}
@@ -571,16 +744,32 @@ export default function DashboardEnhanced() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Time
-                  </label>
-                  <input
-                    type="time"
-                    value={reminderForm.time}
-                    onChange={(e) => setReminderForm({ ...reminderForm, time: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Time
+                    </label>
+                    <input
+                        type="time"
+                        value={reminderForm.time}
+                        onChange={(e) => setReminderForm({ ...reminderForm, time: e.target.value })}
+                        className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
+                    />
+                    </div>
+                    <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Repeat
+                    </label>
+                    <select
+                        value={reminderForm.repeat}
+                        onChange={(e) => setReminderForm({ ...reminderForm, repeat: e.target.value })}
+                        className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all bg-white"
+                    >
+                        <option value="none">Never</option>
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                    </select>
+                    </div>
                 </div>
 
                 <div className="flex gap-3 pt-4">

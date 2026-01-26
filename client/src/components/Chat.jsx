@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Send, MessageCircle, X, Users, Shield } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
+import useAuthStore from '../store/authStore';
 
 export default function Chat({ chatWith = 'citizens' }) {
   const { user, role } = useAuthStore();

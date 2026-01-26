@@ -17,20 +17,17 @@ export const errorHandler = (
 ) => {
   let error = err;
 
-  // Mongoose bad ObjectId
   if (err.name === "CastError") {
     const message = "Resource not found";
     error = new ApiError(404, message);
   }
 
-  // Mongoose duplicate key
   if (err.code === 11000) {
     const field = Object.keys(err.keyValue)[0];
     const message = `${field} already exists`;
     error = new ApiError(409, message);
   }
 
-  // Mongoose validation error
   if (err.name === "ValidationError") {
     const errors = Object.values(err.errors).map((e: any) => ({
       field: e.path,
@@ -52,12 +49,10 @@ export const errorHandler = (
     response.errors = error.errors;
   }
 
-  // Include stack trace in development
   if (config.env === "development") {
     response.stack = error.stack;
   }
 
-  // Log error
   console.error(
     `${statusCode} - ${message} - ${req.originalUrl} - ${req.method} - ${req.ip}`,
   );

@@ -4,6 +4,14 @@ import cors from "cors";
 
 import { config } from "./config/env";
 import { errorHandler, notFound } from "./middlewares/errorHandler";
+import authRoutes from "./routes/authRoutes";
+import adminRoutes from "./routes/adminRoutes";
+import userRoutes from "./routes/userRoutes";
+import managerRoutes from "./routes/managerRoutes";
+import wasteItemRoutes from "./routes/wasteItemRoutes";
+import locationRoutes from "./routes/locationRoutes";
+import reminderRoutes from "./routes/reminderRoutes";
+import eventRoutes from "./routes/eventRoutes";
 
 const app: Application = express();
 
@@ -11,7 +19,7 @@ app.use(helmet());
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "http://localhost:5174", "https://eco-sort-theta.vercel.app"],
     credentials: true,
   }),
 );
@@ -33,6 +41,15 @@ app.get("/health", (_req: Request, res: Response) => {
   });
 });
 
+app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/manager", managerRoutes);
+app.use("/api/waste-items", wasteItemRoutes);
+app.use("/api/locations", locationRoutes);
+app.use("/api/reminders", reminderRoutes);
+app.use("/api/events", eventRoutes);
+
 app.get("/", (_req: Request, res: Response) => {
   res.json({
     success: true,
@@ -42,6 +59,7 @@ app.get("/", (_req: Request, res: Response) => {
       auth: "/api/auth",
       wasteItems: "/api/waste-items",
       locations: "/api/locations",
+      events: "/api/events",
       reminders: "/api/reminders",
       admin: "/api/admin",
     },
@@ -49,7 +67,6 @@ app.get("/", (_req: Request, res: Response) => {
 });
 
 app.use(notFound);
-
 app.use(errorHandler);
 
 export default app;

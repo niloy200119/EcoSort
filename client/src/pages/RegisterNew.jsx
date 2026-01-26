@@ -8,14 +8,14 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function Register() {
-  const [role, setRole] = useState('citizen'); // 'citizen', 'waste-manager', or 'admin'
+  const [role, setRole] = useState('citizen');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     nid: '',
     location: '',
-    organization: '', // For admins only
-    designation: '', // For admins only
+    organization: '',
+    designation: '',
     password: '',
     confirmPassword: ''
   });
@@ -23,7 +23,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   
   const navigate = useNavigate();
-  const login = useAuthStore((state) => state.login);
+  const register = useAuthStore((state) => state.register);
   const { switchTheme } = useTheme();
 
   const handleChange = (e) => {
@@ -40,12 +40,10 @@ export default function Register() {
   };
 
   const validateNID = (nid) => {
-    // NID must be exactly 10 digits
     return /^\d{10}$/.test(nid);
   };
 
   const validateEmail = (email) => {
-    // Email must contain @ and .com
     return /^[^\s@]+@[^\s@]+\.com$/.test(email);
   };
 
@@ -54,7 +52,6 @@ export default function Register() {
     setLoading(true);
     setError('');
 
-    // Validation
     if (!validateEmail(formData.email)) {
       toast.error('Invalid email. Must contain @ and end with .com');
       setLoading(false);
@@ -91,35 +88,37 @@ export default function Register() {
       return;
     }
 
-    // Mock registration - in real app, would call backend API
-    setTimeout(() => {
-      const userData = {
-        name: formData.name,
-        email: formData.email,
-        nid: formData.nid,
-        location: formData.location,
-        role: role,
-        ...((role === 'admin' || role === 'waste-manager') && {
-          organization: formData.organization,
-          designation: formData.designation
-        }),
-        points: role === 'citizen' ? 0 : null,
-        joinedDate: new Date().toISOString()
-      };
+    try {
+        const registrationData = {
+            ...formData,
+            role: role
+        };
+        
+        await register(registrationData);
 
-      login(userData);
-      switchTheme(role);
+        const currentUser = useAuthStore.getState().user;
+        if (currentUser.role === 'user' && (role === 'waste-manager' || role === 'citizen')) {
+            useAuthStore.getState().updateUser({ role: role });
+        }
+        
+        switchTheme(role);
+        toast.success(`Account created successfully!`);
 
-      if (role === 'citizen') {
-        navigate('/dashboard');
-      } else if (role === 'waste-manager') {
-        navigate('/waste-manager/dashboard');
-      } else {
-        navigate('/admin/dashboard');
-      }
-      
-      setLoading(false);
-    }, 1500);
+        if (role === 'citizen') {
+          navigate('/dashboard');
+        } else if (role === 'waste-manager') {
+          navigate('/waste-manager/dashboard');
+        } else {
+          navigate('/admin/dashboard');
+        }
+
+    } catch (err) {
+        console.error(err);
+        setError(err.message || 'Registration failed. Please try again.');
+        toast.error(err.message || 'Registration failed');
+    } finally {
+        setLoading(false);
+    }
   };
 
   const roleStyles = {
@@ -137,24 +136,13 @@ export default function Register() {
     'waste-manager': {
       bg: 'bg-forest-auth',
       glass: 'glass-ultra',
-      text: 'text-emerald-50',
-      textSoft: 'text-emerald-200',
-      accent: 'text-emerald-400',
-      buttonActive: 'bg-emerald-600/60 backdrop-blur-xl',
-      buttonInactive: 'bg-emerald-900/40 backdrop-blur-md',
+      text: 'text-emerald-900',
+      textSoft: 'text-emerald-700',
+      accent: 'text-emerald-600',
+      buttonActive: 'bg-emerald-600 text-white shadow-lg',
+      buttonInactive: 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200',
       glow: 'animate-breathe',
       icon: Truck
-    },
-    admin: {
-      bg: 'bg-admin-auth',
-      glass: 'glass-ultra',
-      text: 'text-amber-900',
-      textSoft: 'text-amber-700',
-      accent: 'text-amber-500',
-      buttonActive: 'bg-amber-400/60 backdrop-blur-xl',
-      buttonInactive: 'bg-amber-100/40 backdrop-blur-md',
-      glow: 'animate-pulse',
-      icon: Shield
     }
   };
 
@@ -188,16 +176,16 @@ export default function Register() {
             Join EcoSort
           </h1>
           <p className={`${currentStyle.textSoft} font-nunito`}>
-            {role === 'citizen' ? 'Start your journey to a greener future' : role === 'waste-manager' ? 'Manage waste collection operations' : 'Monitor and manage waste systems'}
+            {role === 'citizen' ? 'Start your journey to a greener future' : 'Manage waste collection operations'}
           </p>
         </div>
 
         {/* Role Selection */}
-        <div className="flex gap-3 mb-8">
+        <div className="flex gap-3 mb-8 justify-center">
           <button
             type="button"
             onClick={() => handleRoleSwitch('citizen')}
-            className={`flex-1 py-3 px-4 rounded-2xl font-quicksand font-semibold transition-all focus:outline-none focus:ring-0 ${
+            className={`flex-1 max-w-[200px] py-3 px-4 rounded-2xl font-quicksand font-semibold transition-all focus:outline-none focus:ring-0 ${
               role === 'citizen' ? currentStyle.buttonActive : currentStyle.buttonInactive
             }`}
           >
@@ -207,22 +195,12 @@ export default function Register() {
           <button
             type="button"
             onClick={() => handleRoleSwitch('waste-manager')}
-            className={`flex-1 py-3 px-4 rounded-2xl font-quicksand font-semibold transition-all focus:outline-none focus:ring-0 ${
+            className={`flex-1 max-w-[200px] py-3 px-4 rounded-2xl font-quicksand font-semibold transition-all focus:outline-none focus:ring-0 ${
               role === 'waste-manager' ? currentStyle.buttonActive : currentStyle.buttonInactive
             }`}
           >
             <Truck className="w-4 h-4 inline-block mr-1" />
             <span className="text-sm">Manager</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => handleRoleSwitch('admin')}
-            className={`flex-1 py-3 px-4 rounded-2xl font-quicksand font-semibold transition-all focus:outline-none focus:ring-0 ${
-              role === 'admin' ? currentStyle.buttonActive : currentStyle.buttonInactive
-            }`}
-          >
-            <Shield className="w-4 h-4 inline-block mr-1" />
-            <span className="text-sm">Admin</span>
           </button>
         </div>
 
